@@ -1,9 +1,21 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0" version="29.5.2">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36" version="29.5.2">
   <diagram name="Seite-1" id="GKfu4TBS9AbSttB2GSCt">
-    <mxGraphModel dx="538" dy="637" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="305" dy="1099" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-35" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;align=left;" value="UI" vertex="1">
+          <mxGeometry height="150" width="810" x="1748" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-38" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;align=left;" value="REPOS" vertex="1">
+          <mxGeometry height="150" width="812" x="1748" y="455" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-37" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;align=left;" value="SERVICE" vertex="1">
+          <mxGeometry height="150" width="812" x="1748" y="305" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-36" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;align=left;" value="HANDLER" vertex="1">
+          <mxGeometry height="150" width="812" x="1750" y="153" as="geometry" />
+        </mxCell>
         <mxCell id="v4Jc57Frs92aVKuSQD2s-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
           <mxGeometry height="410" width="360" x="1100" y="260" as="geometry" />
         </mxCell>
@@ -95,6 +107,174 @@
           <mxGeometry relative="1" x="0.0149" y="-1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-3" edge="1" parent="1" source="YrPSejXe7zrUAdjPQPlX-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YrPSejXe7zrUAdjPQPlX-2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-8" connectable="0" parent="YrPSejXe7zrUAdjPQPlX-3" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Injects/Depends on" vertex="1">
+          <mxGeometry relative="1" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="UserHandler" vertex="1">
+          <mxGeometry height="60" width="120" x="1840" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-5" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1899.73" y="470" />
+              <mxPoint x="1899.73" y="470" />
+            </Array>
+            <mxPoint x="1899.699696969697" y="409.9999999999999" as="sourcePoint" />
+            <mxPoint x="1899.699696969697" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-9" connectable="0" parent="YrPSejXe7zrUAdjPQPlX-5" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Injects/Depends On" vertex="1">
+          <mxGeometry relative="1" x="-0.025" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="UserServiceImpl" vertex="1">
+          <mxGeometry height="60" width="120" x="1840" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="UserRepository" vertex="1">
+          <mxGeometry height="60" width="120" x="1840" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-7" edge="1" parent="1" source="YrPSejXe7zrUAdjPQPlX-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YrPSejXe7zrUAdjPQPlX-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-19" connectable="0" parent="YrPSejXe7zrUAdjPQPlX-7" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Injects/Depends On" vertex="1">
+          <mxGeometry relative="1" x="-0.0571" y="-4" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="UI (User Clicks login)" vertex="1">
+          <mxGeometry height="60" width="120" x="1840" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-14" edge="1" parent="1" source="YrPSejXe7zrUAdjPQPlX-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YrPSejXe7zrUAdjPQPlX-13" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-44" connectable="0" parent="YrPSejXe7zrUAdjPQPlX-14" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Injects/Depends On" vertex="1">
+          <mxGeometry relative="1" x="-0.1766" y="2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-12" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="UI(User Clicks &quot;Save Tour&quot;)" vertex="1">
+          <mxGeometry height="60" width="120" x="2010" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-16" edge="1" parent="1" source="YrPSejXe7zrUAdjPQPlX-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YrPSejXe7zrUAdjPQPlX-15" value="Injects/Depends On">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-13" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="TourHandler" vertex="1">
+          <mxGeometry height="60" width="120" x="2010" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-18" edge="1" parent="1" source="YrPSejXe7zrUAdjPQPlX-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YrPSejXe7zrUAdjPQPlX-17" value="Injects/Depends On">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="TourServiceImpl" vertex="1">
+          <mxGeometry height="60" width="120" x="2010" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-17" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="TourRepository" vertex="1">
+          <mxGeometry height="60" width="120" x="2010" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-20" edge="1" parent="1" source="YrPSejXe7zrUAdjPQPlX-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YrPSejXe7zrUAdjPQPlX-23" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-48" connectable="0" parent="YrPSejXe7zrUAdjPQPlX-20" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Injects/Depends On" vertex="1">
+          <mxGeometry relative="1" x="-0.2978" y="-1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-21" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="UI(User Clicks &quot;Edit Tour Log&quot;)" vertex="1">
+          <mxGeometry height="60" width="120" x="2199" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-22" edge="1" parent="1" source="YrPSejXe7zrUAdjPQPlX-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YrPSejXe7zrUAdjPQPlX-25" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-49" connectable="0" parent="YrPSejXe7zrUAdjPQPlX-22" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Injects/Depends On" vertex="1">
+          <mxGeometry relative="1" x="-0.4992" y="-1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-23" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="TourLogHandler" vertex="1">
+          <mxGeometry height="60" width="120" x="2199" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-24" edge="1" parent="1" source="YrPSejXe7zrUAdjPQPlX-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YrPSejXe7zrUAdjPQPlX-26" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-50" connectable="0" parent="YrPSejXe7zrUAdjPQPlX-24" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Injects/Depends On" vertex="1">
+          <mxGeometry relative="1" x="-0.378" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-25" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="TourLogServiceImpl" vertex="1">
+          <mxGeometry height="60" width="120" x="2199" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-26" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="TourLogRepository" vertex="1">
+          <mxGeometry height="60" width="120" x="2199" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-29" edge="1" parent="1" source="YrPSejXe7zrUAdjPQPlX-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YrPSejXe7zrUAdjPQPlX-28" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-51" connectable="0" parent="YrPSejXe7zrUAdjPQPlX-29" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Injects/Depends On" vertex="1">
+          <mxGeometry relative="1" x="0.2043" y="2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-27" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="UI (User uses full text search)" vertex="1">
+          <mxGeometry height="60" width="120" x="2370" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-31" edge="1" parent="1" source="YrPSejXe7zrUAdjPQPlX-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YrPSejXe7zrUAdjPQPlX-30" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-52" connectable="0" parent="YrPSejXe7zrUAdjPQPlX-31" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Injects/Depends On" vertex="1">
+          <mxGeometry relative="1" x="-0.5447" y="2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-28" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="SearchHandler" vertex="1">
+          <mxGeometry height="60" width="120" x="2370" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-33" edge="1" parent="1" source="YrPSejXe7zrUAdjPQPlX-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YrPSejXe7zrUAdjPQPlX-32" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-53" connectable="0" parent="YrPSejXe7zrUAdjPQPlX-33" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Injects/Depends On" vertex="1">
+          <mxGeometry relative="1" x="-0.3932" y="2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-30" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="SearchServiceImpl" vertex="1">
+          <mxGeometry height="60" width="120" x="2370" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-32" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="SearchRepository" vertex="1">
+          <mxGeometry height="60" width="120" x="2370" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-54" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;align=left;" value="DB" vertex="1">
+          <mxGeometry height="150" width="812" x="1746" y="605" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-55" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="PostgreSQL" vertex="1">
+          <mxGeometry height="110" width="660" x="1820" y="625" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-56" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="OpenRouteServiceClient" vertex="1">
+          <mxGeometry height="60" width="160" x="1560" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-57" parent="1" style="whiteSpace=wrap;html=1;" value="External Service" vertex="1">
+          <mxGeometry height="20" width="120" x="1582" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-58" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Frontend" vertex="1">
+          <mxGeometry height="50" width="660" x="1830" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-60" parent="1" style="whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;IUserService&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="70" x="1820" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-61" parent="1" style="whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;ITourService&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="70" x="1990" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-62" parent="1" style="whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;ITourLogService&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="70" x="2180" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-63" parent="1" style="whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;ISearchService&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="70" x="2350" y="320" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
