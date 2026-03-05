@@ -1,2 +1,37 @@
 *.idea
 .env
+# Node / npm
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Angular build output
+/dist/
+/out-tsc/
+
+# Angular cache
+/.angular/
+.cache/
+
+# Environment files (optional)
+src/environments/environment*.ts
+
+# IDEs & editors
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Coverage reports
+/coverage/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
