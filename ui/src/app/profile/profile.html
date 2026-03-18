@@ -1,2 +1,53 @@
 <app-navbar></app-navbar>
-<p>profile works!</p>
+
+<div class="container mt-4">
+  <div class="row text-center">
+
+    <!-- Completed Tours -->
+    <div class="col-md-6">
+      <h5>Completed Tours</h5>
+
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Tour Name</th>
+            <th>Start</th>
+            <th>End</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tour of completedTours">
+            <td>{{ tour.name }}</td>
+            <td>{{ tour.start }}</td>
+            <td>{{ tour.end }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Created Tours -->
+    <div class="col-md-6">
+      <h5>Created Tours</h5>
+
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Tour Name</th>
+            <th>Start</th>
+            <th>End</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tour of createdTours">
+            <td>{{ tour.name }}</td>
+            <td>{{ tour.start }}</td>
+            <td>{{ tour.end }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
