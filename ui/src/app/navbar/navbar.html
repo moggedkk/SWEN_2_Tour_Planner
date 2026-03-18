@@ -1,13 +1,39 @@
-<nav class="navbar bg-body-tertiary">
-  <div class="container-fluid d-flex">
-    <div class="d-flex">
-       <a class="navbar-brand" routerLink="/main">Home</a>
-      <a class="navbar-brand" routerLink="/alltours">All Tours</a>
-      <a class="navbar-brand" routerLink="/createtours">Create Tour</a>
-    </div>
-    <div class="ms-auto">
-        <a class="navbar-brand" routerLink="/">Logout</a>
-      <a class="navbar-brand" routerLink="/profile">Profile</a>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+
+    <!-- Toggle button (hamburger) -->
+    <button 
+      class="navbar-toggler" 
+      type="button" 
+      data-bs-toggle="collapse" 
+      data-bs-target="#navbarNav"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+
+      <!-- Left side -->
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/alltours">All Tours</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/createtours">Create Tour</a>
+        </li>
+      </ul>
+
+      <!-- Right side -->
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/">Logout</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/profile">Profile</a>
+        </li>
+      </ul>
+
     </div>
   </div>
 </nav>
