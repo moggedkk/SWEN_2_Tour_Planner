@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36" version="29.5.2">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36" version="29.6.0">
   <diagram name="Seite-1" id="GKfu4TBS9AbSttB2GSCt">
-    <mxGraphModel dx="305" dy="1099" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="133" dy="606" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -23,6 +23,9 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="v4Jc57Frs92aVKuSQD2s-15" edge="1" parent="1" source="v4Jc57Frs92aVKuSQD2s-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v4Jc57Frs92aVKuSQD2s-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ebVjqKj8eAozF1-csf1Y-1" edge="1" parent="1" source="v4Jc57Frs92aVKuSQD2s-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v4Jc57Frs92aVKuSQD2s-31">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="v4Jc57Frs92aVKuSQD2s-2" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" value="Logged in User" vertex="1">
@@ -83,7 +86,7 @@
         <mxCell id="v4Jc57Frs92aVKuSQD2s-31" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="Select Tour" vertex="1">
           <mxGeometry height="40" width="90" x="1145" y="370" as="geometry" />
         </mxCell>
-        <mxCell id="v4Jc57Frs92aVKuSQD2s-32" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" value="">
+        <mxCell id="v4Jc57Frs92aVKuSQD2s-32" edge="1" parent="1" style="endArrow=none;html=1;strokeWidth=2;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;dashed=1;" value="">
           <mxGeometry height="50" relative="1" width="50" as="geometry">
             <mxPoint x="1189.66" y="369.9999999999999" as="sourcePoint" />
             <mxPoint x="1189.66" y="319.9999999999999" as="targetPoint" />
@@ -137,7 +140,7 @@
         <mxCell id="YrPSejXe7zrUAdjPQPlX-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="UserServiceImpl" vertex="1">
           <mxGeometry height="60" width="120" x="1840" y="350" as="geometry" />
         </mxCell>
-        <mxCell id="YrPSejXe7zrUAdjPQPlX-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="UserRepository" vertex="1">
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="UserRepository&lt;div&gt;-CRUD Methods&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="120" x="1840" y="490" as="geometry" />
         </mxCell>
         <mxCell id="YrPSejXe7zrUAdjPQPlX-7" edge="1" parent="1" source="YrPSejXe7zrUAdjPQPlX-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YrPSejXe7zrUAdjPQPlX-1">
@@ -174,7 +177,7 @@
         <mxCell id="YrPSejXe7zrUAdjPQPlX-15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="TourServiceImpl" vertex="1">
           <mxGeometry height="60" width="120" x="2010" y="350" as="geometry" />
         </mxCell>
-        <mxCell id="YrPSejXe7zrUAdjPQPlX-17" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="TourRepository" vertex="1">
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-17" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="TourRepository&lt;div&gt;-CRUD Methods&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="120" x="2010" y="490" as="geometry" />
         </mxCell>
         <mxCell id="YrPSejXe7zrUAdjPQPlX-20" edge="1" parent="1" source="YrPSejXe7zrUAdjPQPlX-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YrPSejXe7zrUAdjPQPlX-23" value="">
@@ -210,7 +213,7 @@
         <mxCell id="YrPSejXe7zrUAdjPQPlX-25" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="TourLogServiceImpl" vertex="1">
           <mxGeometry height="60" width="120" x="2199" y="350" as="geometry" />
         </mxCell>
-        <mxCell id="YrPSejXe7zrUAdjPQPlX-26" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="TourLogRepository" vertex="1">
+        <mxCell id="YrPSejXe7zrUAdjPQPlX-26" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="TourLogRepository&lt;div&gt;-CRUD Methods&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="120" x="2199" y="490" as="geometry" />
         </mxCell>
         <mxCell id="YrPSejXe7zrUAdjPQPlX-29" edge="1" parent="1" source="YrPSejXe7zrUAdjPQPlX-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="YrPSejXe7zrUAdjPQPlX-28" value="">
