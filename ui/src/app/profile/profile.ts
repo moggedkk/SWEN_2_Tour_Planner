@@ -1,12 +1,7 @@
 import { Component } from '@angular/core';
 import { Navbar } from '../navbar/navbar';
 import { CommonModule } from '@angular/common';
-
-interface Tour {
-  name: string;
-  start: string;
-  end: string;
-}
+import { Tour } from '../models/Tour';
 
 @Component({
   selector: 'app-profile',
@@ -16,15 +11,17 @@ interface Tour {
   styleUrls: ['./profile.css'],
 })
 export class Profile {
-
-  completedTours: Tour[] = [
-    { name: 'Vienna City Tour', start: 'Vienna', end: 'Vienna' },
-    { name: 'Graz Trip', start: 'Vienna', end: 'Graz' }
-  ];
-
+  username: string;
+  completedTours: Tour[] = Tour.GetTours();
   createdTours: Tour[] = [
-    { name: 'Alps Tour', start: 'Salzburg', end: 'Innsbruck' },
-    { name: 'Danube Route', start: 'Linz', end: 'Vienna' }
+    new Tour('Vienna City Tour', 'Vienna', 'Vienna'),
+    new Tour('Graz Trip', 'Vienna', 'Graz'),
   ];
 
+  constructor() {
+    this.username = 'default';
+  }
+  GetUsername(): string {
+    return this.username;
+  }
 }

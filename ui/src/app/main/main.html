@@ -1,4 +1,5 @@
 <app-navbar></app-navbar>
+<div id="map" class="map-container"></div>
 <div class="d-flex justify-content-center align-items-center">
   <div class="form-container text-center">
     <input type="text" class="form-control mb-2" placeholder="First input" />
@@ -6,4 +7,23 @@
     <button class="btn btn-primary">Submit</button>
   </div>
 </div>
-<div id="map" class="map-container"></div>
+<div class="container">
+  <h5>Your Tours</h5>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Tour Name</th>
+        <th>Start</th>
+        <th>End</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let tour of createdTours">
+        <td>{{ tour.name }}</td>
+        <td>{{ tour.start }}</td>
+        <td>{{ tour.end }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
