@@ -1,0 +1,12 @@
+# Nmap 7.92 scan initiated Sun Mar 22 09:26:01 2026 as: nmap -sn -oN scan.txt 10.0.0.0/24
+Nmap scan report for 10.0.0.28
+Host is up (0.020s latency).
+Nmap scan report for A52-von-Elisabeth (10.0.0.60)
+Host is up (0.011s latency).
+Nmap scan report for Mia-s-S21 (10.0.0.62)
+Host is up (0.057s latency).
+Nmap scan report for android-df82db76b8f725e6 (10.0.0.65)
+Host is up (0.00051s latency).
+Nmap scan report for _gateway (10.0.0.138)
+Host is up (0.081s latency).
+# Nmap done at Sun Mar 22 09:26:06 2026 -- 256 IP addresses (5 hosts up) scanned in 5.27 seconds

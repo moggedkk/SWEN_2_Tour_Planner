@@ -2,11 +2,9 @@
 
 <div class="container mt-4">
   <div class="row text-center">
-
     <!-- Completed Tours -->
     <div class="col-md-6">
       <h5>Completed Tours</h5>
-
 
       <table class="table">
         <thead>
@@ -14,6 +12,7 @@
             <th>Tour Name</th>
             <th>Start</th>
             <th>End</th>
+            <th>Difficulty</th>
           </tr>
         </thead>
         <tbody>
@@ -21,6 +20,7 @@
             <td>{{ tour.name }}</td>
             <td>{{ tour.start }}</td>
             <td>{{ tour.end }}</td>
+            <td>{{ tour.difficulty }}</td>
           </tr>
         </tbody>
       </table>
@@ -30,13 +30,13 @@
     <div class="col-md-6">
       <h5>Created Tours</h5>
 
-
       <table class="table">
         <thead>
           <tr>
             <th>Tour Name</th>
             <th>Start</th>
             <th>End</th>
+            <th>Difficulty</th>
           </tr>
         </thead>
         <tbody>
@@ -44,10 +44,10 @@
             <td>{{ tour.name }}</td>
             <td>{{ tour.start }}</td>
             <td>{{ tour.end }}</td>
+            <td>{{ tour.difficulty }}</td>
           </tr>
         </tbody>
       </table>
     </div>
-
   </div>
 </div>

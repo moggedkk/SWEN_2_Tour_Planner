@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { Navbar } from '../navbar/navbar';
+import { Navbar } from '../../components/navbar/navbar';
 import { AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Tour } from '../models/Tour';
+import { Tour } from '../../models/Tour';
 
 @Component({
   selector: 'app-main',

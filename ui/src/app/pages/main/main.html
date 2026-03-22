@@ -16,14 +16,17 @@
         <th>Tour Name</th>
         <th>Start</th>
         <th>End</th>
+        <th>Difficulty</th>
       </tr>
     </thead>
+        <button class="btn"></button>
     <tbody>
-      <tr *ngFor="let tour of createdTours">
-        <td>{{ tour.name }}</td>
-        <td>{{ tour.start }}</td>
-        <td>{{ tour.end }}</td>
-      </tr>
+        <tr *ngFor="let tour of createdTours">
+          <td>{{ tour.name }}</td>
+          <td>{{ tour.start }}</td>
+          <td>{{ tour.end }}</td>
+          <td>{{ tour.difficulty }}</td>
+        </tr>
     </tbody>
   </table>
 </div>

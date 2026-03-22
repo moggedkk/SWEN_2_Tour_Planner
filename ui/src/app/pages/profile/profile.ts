@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { Navbar } from '../navbar/navbar';
+import { Navbar } from '../../components/navbar/navbar';
 import { CommonModule } from '@angular/common';
-import { Tour } from '../models/Tour';
+import { Tour } from '../../models/Tour';
 
 @Component({
   selector: 'app-profile',
@@ -14,8 +14,8 @@ export class Profile {
   username: string;
   completedTours: Tour[] = Tour.GetTours();
   createdTours: Tour[] = [
-    new Tour('Vienna City Tour', 'Vienna', 'Vienna'),
-    new Tour('Graz Trip', 'Vienna', 'Graz'),
+    new Tour('Vienna City Tour', 'Vienna', 'Vienna', 'Challenging'),
+    new Tour('Graz Trip', 'Vienna', 'Graz', 'Challenging'),
   ];
 
   constructor() {

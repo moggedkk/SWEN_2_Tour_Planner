@@ -1,14 +1,16 @@
 import { Routes } from '@angular/router';
-import { Main } from './main/main';
-import { Profile } from './profile/profile';
-import {Login} from './login/login';
-import {Register} from './register/register';
-import { Createtours } from './createtours/createtours';
+import { Main } from './pages/main/main';
+import { Profile } from './pages/profile/profile';
+import {Login} from './pages/login/login';
+import {Register} from './pages/register/register';
+import { Createtours } from './pages/createtours/createtours';
+import { Import } from './pages/import/import';
 
 export const routes: Routes = [ 
     {path: '', component: Login},
     {path : "register", component : Register},
     {path: 'profile', component: Profile},
     {path: 'main', component: Main},
-    {path: 'createtours', component: Createtours}
+    {path: 'createtours', component: Createtours},
+    {path: 'import', component: Import}
 ];

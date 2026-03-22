@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { Navbar } from '../navbar/navbar';
+import { Navbar } from '../../components/navbar/navbar';
+import { TourActions } from '../../components/tour-actions/tour-actions';
 @Component({
   selector: 'app-createtours',
-  imports: [Navbar],
+  imports: [Navbar, TourActions],
   templateUrl: './createtours.html',
   styleUrl: './createtours.css',
 })
