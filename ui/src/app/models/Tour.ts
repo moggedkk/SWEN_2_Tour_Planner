@@ -5,6 +5,13 @@ export enum TransportType {
   Hike = 'foot-hiking'
 }
 
+export interface TourLog {
+  date: string;
+  comment: string;
+  duration: number; // in minutes
+  difficultyRating: string;
+}
+
 export class Tour {
   public name: string;
   public start: string;
@@ -12,6 +19,7 @@ export class Tour {
   public difficulty: string;
   public description: string;
   public transportType: TransportType;
+  public logs: TourLog[] = [];
 
   // New params for API integration
   public distance: number;      // To be retrieved from OpenRouteservice (in meters/km)
