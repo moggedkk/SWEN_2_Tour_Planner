@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Navbar } from '../../components/navbar/navbar';
 import { AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Tour } from '../../models/Tour';
+import { TourService } from '../../services/tour';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-main',
@@ -11,10 +13,24 @@ import { Tour } from '../../models/Tour';
   templateUrl: './main.html',
   styleUrl: './main.css',
 })
-export class Main implements AfterViewInit {
-  createdTours: Tour[] = Tour.GetTours();
-
+export class Main implements AfterViewInit, OnInit, OnDestroy {
+  createdTours: Tour[] = [];
+  private toursSubscription?: Subscription;
   private map: any = null;
+
+  constructor(private tourService: TourService) {}
+
+  ngOnInit() {
+    // We subscribe to the service to get the real-time list of tours.
+    this.toursSubscription = this.tourService.tours$.subscribe(tours => {
+      this.createdTours = tours;
+    });
+  }
+
+  ngOnDestroy() {
+    // Good practice: unsubscribe to prevent memory leaks.
+    this.toursSubscription?.unsubscribe();
+  }
 
   async ngAfterViewInit() {
     if (typeof window === 'undefined') return;

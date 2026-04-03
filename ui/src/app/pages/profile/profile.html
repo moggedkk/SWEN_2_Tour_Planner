@@ -1,53 +1,99 @@
 <app-navbar></app-navbar>
 
-<div class="container mt-4">
-  <div class="row text-center">
-    <!-- Completed Tours -->
-    <div class="col-md-6">
-      <h5>Completed Tours</h5>
+<div class="container mt-5">
+  <!-- Profile Header Card -->
+  <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-5">
+    <div class="card-body bg-light py-4 px-4">
+      <div class="row align-items-center">
+        <div class="col-auto">
+          <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow"
+               style="width: 100px; height: 100px; font-size: 2.5rem; font-weight: bold;">
+            {{ username.charAt(0) }}
+          </div>
+        </div>
+        <div class="col">
+          <h2 class="mb-1">{{ username }}</h2>
+          <p class="text-muted mb-0">Tour Planner Enthusiast</p>
+          <div class="mt-2 d-flex gap-3">
+            <span class="badge bg-secondary rounded-pill">{{ getStats().total }} Tours Created</span>
+            <span class="badge bg-info text-dark rounded-pill">{{ getStats().distance }} km Total</span>
+          </div>
+        </div>
+        <div class="col-auto text-end">
+          <button class="btn btn-outline-primary btn-sm rounded-pill px-4">Edit Profile</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Tour Name</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>Difficulty</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let tour of completedTours">
-            <td>{{ tour.name }}</td>
-            <td>{{ tour.start }}</td>
-            <td>{{ tour.end }}</td>
-            <td>{{ tour.difficulty }}</td>
-          </tr>
-        </tbody>
-      </table>
+  <div class="row g-4">
+    <!-- Created Tours Column -->
+    <div class="col-lg-6">
+      <div class="d-flex align-items-center justify-content-between mb-3 px-2">
+        <h4 class="mb-0 fw-bold">My Tours</h4>
+        <span class="text-muted small">{{ createdTours.length }} items</span>
+      </div>
+
+      <div class="list-group list-group-flush shadow-sm rounded-3">
+        <div *ngFor="let tour of createdTours" class="list-group-item list-group-item-action border-0 py-3 mb-2 bg-white rounded-3 shadow-sm position-relative">
+          <div class="d-flex justify-content-between align-items-start mb-2 pe-4">
+            <h6 class="mb-0 fw-bold text-primary">{{ tour.name }}</h6>
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge"
+                    [ngClass]="{
+                      'bg-success-subtle text-success': tour.difficulty === 'Easy',
+                      'bg-warning-subtle text-warning': tour.difficulty === 'Moderate',
+                      'bg-danger-subtle text-danger': tour.difficulty === 'Challenging'
+                    }">
+                {{ tour.difficulty }}
+              </span>
+            </div>
+          </div>
+
+
+          <button class="btn btn-link text-danger p-0 border-0 position-absolute top-0 end-0 mt-3 me-3 opacity-50 hover-opacity-100"
+                  title="Delete Tour"
+                  (click)="onDeleteTour(tour.name)">
+            🗑️
+          </button>
+
+          <div class="small text-muted mb-2">
+            <i class="bi bi-geo-alt-fill me-1"></i> {{ tour.start }} &rarr; {{ tour.end }}
+          </div>
+          <div class="d-flex align-items-center small text-muted">
+            <span class="me-3"><i class="bi bi-speedometer2 me-1"></i> {{ tour.distance }} km</span>
+            <span><i class="bi bi-clock me-1"></i> {{ tour.estimatedTime }} min</span>
+          </div>
+        </div>
+        <div *ngIf="createdTours.length === 0" class="list-group-item text-center py-5 text-muted bg-white rounded-3">
+          No tours created yet.
+        </div>
+      </div>
     </div>
 
-    <!-- Created Tours -->
-    <div class="col-md-6">
-      <h5>Created Tours</h5>
+    <!-- Completed Tours Column -->
+    <div class="col-lg-6">
+      <div class="d-flex align-items-center justify-content-between mb-3 px-2">
+        <h4 class="mb-0 fw-bold">Recent Activity</h4>
+        <span class="text-muted small">Completed</span>
+      </div>
 
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Tour Name</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>Difficulty</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let tour of createdTours">
-            <td>{{ tour.name }}</td>
-            <td>{{ tour.start }}</td>
-            <td>{{ tour.end }}</td>
-            <td>{{ tour.difficulty }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="list-group list-group-flush shadow-sm rounded-3">
+        <div *ngFor="let tour of completedTours" class="list-group-item border-0 py-3 mb-2 bg-white rounded-3 shadow-sm opacity-75">
+          <div class="d-flex align-items-center">
+            <div class="rounded-circle bg-success bg-opacity-10 text-success p-2 me-3">
+              <i class="bi bi-check-lg" style="font-size: 1.2rem;"></i>
+            </div>
+            <div>
+              <h6 class="mb-0 fw-bold">{{ tour.name }}</h6>
+              <div class="small text-muted">Successfully completed on March 28, 2026</div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="completedTours.length === 0" class="list-group-item text-center py-5 text-muted bg-white rounded-3">
+          No activity recorded.
+        </div>
+      </div>
     </div>
   </div>
 </div>

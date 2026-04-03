@@ -25,6 +25,6 @@ export class Login {
     // TODO: Add actual authentication logic here
     console.log('Login attempt:', this.username);
     this.errorMessage = '';
-    // this.router.navigate(['/home']);
+    this.router.navigate(['/main']);
   }
 }
