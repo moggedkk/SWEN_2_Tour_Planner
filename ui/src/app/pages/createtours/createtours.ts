@@ -28,7 +28,7 @@ export class Createtours {
     estimatedTime: 0
   };
 
-  // Expose TransportType enum to template
+  // Expose TransportType enum to template  
   transportTypes = Object.values(TransportType);
 
   onSubmit(): void {
