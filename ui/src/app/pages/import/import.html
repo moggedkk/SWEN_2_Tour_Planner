@@ -1,3 +1,19 @@
 <app-navbar></app-navbar>
 <app-tour-actions></app-tour-actions>
-<p>import works!</p>
+
+
+<div class="container mt-4">
+  <div class="mb-3">
+    <label for="jsonInput" class="form-label">Paste your JSON here:</label>
+    <textarea
+      id="jsonInput"
+      class="form-control"
+      [(ngModel)]="jsonText"
+      placeholder="Paste JSON here..."
+      rows="10"
+      style="overflow-y: auto;"
+    ></textarea>
+  </div>
+
+  <button class="btn btn-primary" (click)="parseJson()">Parse JSON</button>
+</div>
