@@ -85,27 +85,54 @@
     <div class="col-lg-6">
       <div class="d-flex align-items-center justify-content-between mb-3 px-2">
         <h4 class="mb-0 fw-bold">Recent Activity</h4>
-        <span class="text-muted small">Latest Logs</span>
+        <span class="text-muted small">Tour Logs</span>
       </div>
 
       <div class="list-group list-group-flush shadow-sm rounded-3">
-        <div *ngFor="let entry of recentLogs" class="list-group-item border-0 py-3 mb-2 bg-white rounded-3 shadow-sm opacity-75">
-          <div class="d-flex align-items-center">
-            <div class="rounded-circle bg-success bg-opacity-10 text-success p-2 me-3">
-              <i class="bi bi-check-lg" style="font-size: 1.2rem;"></i>
-            </div>
-            <div class="flex-grow-1">
-              <h6 class="mb-0 fw-bold">{{ entry.tour.name }}</h6>
-              <div class="small text-muted">
-                Completed on {{ entry.log.date }} • {{ entry.log.duration }} min • {{ entry.log.difficultyRating }}
+        <!-- Group tour logs by tour -->
+        <div *ngFor="let tourName of getGroupedTourNames()" class="mb-3">
+          <!-- Tour Group Header -->
+          <div class="list-group-item border-0 py-2 bg-light rounded-3 mb-2">
+            <h6 class="mb-0 fw-bold text-primary">{{ tourName }}</h6>
+            <small class="text-muted">{{ groupedTourLogs.get(tourName)?.length }} log(s)</small>
+          </div>
+
+          <!-- Individual Logs for this Tour -->
+          <div *ngFor="let log of groupedTourLogs.get(tourName)"
+               class="list-group-item border-0 py-3 mb-2 bg-white rounded-3 shadow-sm ms-3">
+            <div class="d-flex align-items-start">
+              <div class="rounded-circle bg-success bg-opacity-10 text-success p-2 me-3">
+                <i class="bi bi-check-lg" style="font-size: 1.2rem;"></i>
               </div>
-              <div *ngIf="entry.log.comment" class="small text-muted fst-italic mt-1">
-                "{{ entry.log.comment }}"
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                  <div>
+                    <div class="small text-muted">
+                      <strong>{{ log.date }}</strong> • {{ log.duration }} min • {{ log.difficultyRating }}
+                    </div>
+                    <div *ngIf="log.comment" class="small text-muted fst-italic mt-1">
+                      "{{ log.comment }}"
+                    </div>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-link text-primary p-0 border-0 opacity-50 hover-opacity-100"
+                            title="Edit Log"
+                            (click)="onEditLog(log)">
+                      ✏️
+                    </button>
+                    <button class="btn btn-link text-danger p-0 border-0 opacity-50 hover-opacity-100"
+                            title="Delete Log"
+                            (click)="onDeleteLog(log)">
+                      🗑️
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div *ngIf="recentLogs.length === 0" class="list-group-item text-center py-5 text-muted bg-white rounded-3">
+
+        <div *ngIf="getGroupedTourNames().length === 0" class="list-group-item text-center py-5 text-muted bg-white rounded-3">
           No activity recorded yet.
         </div>
       </div>
@@ -127,50 +154,51 @@
           <div class="row g-3">
             <!-- Name -->
             <div class="col-md-12">
-              <label class="form-label fw-bold small text-muted text-uppercase">Tour Name</label>
-              <input type="text" name="name" [(ngModel)]="editingTour.name" class="form-control" required>
+              <label class="form-label fw-bold small text-muted text-uppercase">Tour Name <span class="text-danger">*</span></label>
+              <input type="text" name="name" [(ngModel)]="editingTour.name" class="form-control" required minlength="3" maxlength="100">
             </div>
 
             <!-- Start & End -->
             <div class="col-md-6">
-              <label class="form-label fw-bold small text-muted text-uppercase">Start Location</label>
-              <input type="text" name="start" [(ngModel)]="editingTour.start" class="form-control" required>
+              <label class="form-label fw-bold small text-muted text-uppercase">Start Location <span class="text-danger">*</span></label>
+              <input type="text" name="start" [(ngModel)]="editingTour.start" class="form-control" required minlength="2">
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-bold small text-muted text-uppercase">End Location</label>
-              <input type="text" name="end" [(ngModel)]="editingTour.end" class="form-control" required>
+              <label class="form-label fw-bold small text-muted text-uppercase">End Location <span class="text-danger">*</span></label>
+              <input type="text" name="end" [(ngModel)]="editingTour.end" class="form-control" required minlength="2">
             </div>
 
             <!-- Difficulty & Transport -->
             <div class="col-md-6">
-              <label class="form-label fw-bold small text-muted text-uppercase">Difficulty</label>
-              <select name="difficulty" [(ngModel)]="editingTour.difficulty" class="form-select">
+              <label class="form-label fw-bold small text-muted text-uppercase">Difficulty <span class="text-danger">*</span></label>
+              <select name="difficulty" [(ngModel)]="editingTour.difficulty" class="form-select" required>
+                <option value="">Select difficulty</option>
                 <option value="Easy">Easy</option>
                 <option value="Moderate">Moderate</option>
                 <option value="Challenging">Challenging</option>
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-bold small text-muted text-uppercase">Transport Type</label>
-              <select name="transportType" [(ngModel)]="editingTour.transportType" class="form-select">
+              <label class="form-label fw-bold small text-muted text-uppercase">Transport Type <span class="text-danger">*</span></label>
+              <select name="transportType" [(ngModel)]="editingTour.transportType" class="form-select" required>
                 <option *ngFor="let type of transportTypes" [value]="type">{{ type }}</option>
               </select>
             </div>
 
             <!-- Description -->
             <div class="col-12">
-              <label class="form-label fw-bold small text-muted text-uppercase">Description</label>
-              <textarea name="description" [(ngModel)]="editingTour.description" class="form-control" rows="3"></textarea>
+              <label class="form-label fw-bold small text-muted text-uppercase">Description <span class="text-danger">*</span></label>
+              <textarea name="description" [(ngModel)]="editingTour.description" class="form-control" rows="3" required minlength="10" maxlength="500"></textarea>
             </div>
 
             <!-- Stats -->
             <div class="col-md-6">
-              <label class="form-label fw-bold small text-muted text-uppercase">Distance (km)</label>
-              <input type="number" name="distance" [(ngModel)]="editingTour.distance" class="form-control">
+              <label class="form-label fw-bold small text-muted text-uppercase">Distance (km) <span class="text-danger">*</span></label>
+              <input type="number" name="distance" [(ngModel)]="editingTour.distance" class="form-control" required min="0.1" max="10000" step="0.1">
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-bold small text-muted text-uppercase">Est. Time (min)</label>
-              <input type="number" name="estimatedTime" [(ngModel)]="editingTour.estimatedTime" class="form-control">
+              <label class="form-label fw-bold small text-muted text-uppercase">Est. Time (min) <span class="text-danger">*</span></label>
+              <input type="number" name="estimatedTime" [(ngModel)]="editingTour.estimatedTime" class="form-control" required min="1" max="100000">
             </div>
           </div>
         </form>
@@ -178,6 +206,63 @@
       <div class="modal-footer border-0 p-4 pt-0">
         <button type="button" class="btn btn-light rounded-pill px-4" (click)="onCancelEdit()">Cancel</button>
         <button type="button" class="btn btn-primary rounded-pill px-4" (click)="onSaveEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit TourLog Modal -->
+<div *ngIf="isEditLogModalOpen" class="modal-backdrop fade show"></div>
+<div *ngIf="isEditLogModalOpen" class="modal d-block" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header bg-success text-white rounded-top-4 py-3">
+        <h5 class="modal-title fw-bold">Edit Tour Log</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="onCancelLogEdit()"></button>
+      </div>
+      <div class="modal-body p-4" *ngIf="editingLog">
+        <form #editLogForm="ngForm">
+          <div class="row g-3">
+            <!-- Tour Name (Read-only) -->
+            <div class="col-12">
+              <label class="form-label fw-bold small text-muted text-uppercase">Tour</label>
+              <input type="text" [value]="editingLog.tourName" class="form-control" disabled>
+            </div>
+
+            <!-- Date -->
+            <div class="col-md-6">
+              <label class="form-label fw-bold small text-muted text-uppercase">Date <span class="text-danger">*</span></label>
+              <input type="date" name="date" [(ngModel)]="editingLog.date" class="form-control" required max="{{ getCurrentDate() }}">
+            </div>
+
+            <!-- Duration -->
+            <div class="col-md-6">
+              <label class="form-label fw-bold small text-muted text-uppercase">Duration (min) <span class="text-danger">*</span></label>
+              <input type="number" name="duration" [(ngModel)]="editingLog.duration" class="form-control" required min="1" max="100000">
+            </div>
+
+            <!-- Difficulty Rating -->
+            <div class="col-12">
+              <label class="form-label fw-bold small text-muted text-uppercase">Difficulty Rating <span class="text-danger">*</span></label>
+              <select name="difficultyRating" [(ngModel)]="editingLog.difficultyRating" class="form-select" required>
+                <option value="">Select rating</option>
+                <option value="Easy">Easy</option>
+                <option value="Moderate">Moderate</option>
+                <option value="Challenging">Challenging</option>
+              </select>
+            </div>
+
+            <!-- Comment -->
+            <div class="col-12">
+              <label class="form-label fw-bold small text-muted text-uppercase">Comment</label>
+              <textarea name="comment" [(ngModel)]="editingLog.comment" class="form-control" rows="3" placeholder="How was your experience?" maxlength="1000"></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer border-0 p-4 pt-0">
+        <button type="button" class="btn btn-light rounded-pill px-4" (click)="onCancelLogEdit()">Cancel</button>
+        <button type="button" class="btn btn-success rounded-pill px-4" (click)="onSaveLogEdit()">Save Changes</button>
       </div>
     </div>
   </div>

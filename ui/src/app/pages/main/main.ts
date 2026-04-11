@@ -3,6 +3,7 @@ import { Navbar } from '../../components/navbar/navbar';
 import { CommonModule } from '@angular/common';
 import { Tour, TransportType, TourLog } from '../../models/Tour';
 import { TourService } from '../../services/tour';
+import { TourLogService } from '../../services/tourlog';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { ToastService, ToastType } from '../../services/ToastService';
@@ -17,6 +18,7 @@ import { ToastService, ToastType } from '../../services/ToastService';
 export class Main implements AfterViewInit, OnInit, OnDestroy {
   // Services
   private tourService = inject(TourService);
+  private tourLogService = inject(TourLogService);
   private toastService = inject(ToastService);
 
   // Data
@@ -66,8 +68,8 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
     this.newLog = {
       date: new Date().toISOString().split('T')[0],
       comment: '',
-      duration: tour.estimatedTime || 0,
-      difficultyRating: tour.difficulty
+      duration: 0,
+      difficultyRating: ''
     };
     this.isLogModalOpen = true;
   }
@@ -77,8 +79,17 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
       return;
     }
 
-    // Add the completion log to the tour
-    this.tourService.addTourLog(this.selectedTour.name, this.newLog);
+    // Validate required fields
+    if (!this.newLog.date || this.newLog.duration < 1 || !this.newLog.difficultyRating) {
+      this.toastService.show(
+        'Please fill in all required fields (Date, Duration min 1, and Difficulty Rating)',
+        ToastType.Danger
+      );
+      return;
+    }
+
+    // Add the completion log using TourLogService
+    this.tourLogService.addTourLog(this.selectedTour.name, this.newLog);
 
     this.toastService.show(
       `Completion log added for "${this.selectedTour.name}"!`,
@@ -91,6 +102,10 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
   closeLogModal(): void {
     this.isLogModalOpen = false;
     this.selectedTour = null;
+  }
+
+  getCurrentDate(): string {
+    return new Date().toISOString().split('T')[0];
   }
 
   async ngAfterViewInit() {

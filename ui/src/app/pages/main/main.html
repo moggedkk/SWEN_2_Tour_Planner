@@ -114,18 +114,21 @@
 
         <form #logForm="ngForm">
           <div class="mb-3">
-            <label class="form-label fw-bold small text-muted text-uppercase">Completion Date</label>
-            <input type="date" name="date" [(ngModel)]="newLog.date" class="form-control rounded-pill" required>
+            <label class="form-label fw-bold small text-muted text-uppercase">Completion Date <span class="text-danger">*</span></label>
+            <input type="date" name="date" [(ngModel)]="newLog.date" class="form-control rounded-pill" required max="{{ getCurrentDate() }}">
+            <div class="form-text">Cannot be in the future</div>
           </div>
 
           <div class="row mb-3">
             <div class="col-md-6">
-              <label class="form-label fw-bold small text-muted text-uppercase">Time Taken (min)</label>
-              <input type="number" name="duration" [(ngModel)]="newLog.duration" class="form-control rounded-pill" required>
+              <label class="form-label fw-bold small text-muted text-uppercase">Time Taken (min) <span class="text-danger">*</span></label>
+              <input type="number" name="duration" [(ngModel)]="newLog.duration" class="form-control rounded-pill" required min="1" max="100000">
+              <div class="form-text">At least 1 minute</div>
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-bold small text-muted text-uppercase">Your Difficulty Rating</label>
-              <select name="difficulty" [(ngModel)]="newLog.difficultyRating" class="form-select rounded-pill">
+              <label class="form-label fw-bold small text-muted text-uppercase">Your Difficulty Rating <span class="text-danger">*</span></label>
+              <select name="difficulty" [(ngModel)]="newLog.difficultyRating" class="form-select rounded-pill" required>
+                <option value="">Select rating</option>
                 <option value="Easy">Easy</option>
                 <option value="Moderate">Moderate</option>
                 <option value="Challenging">Challenging</option>
@@ -135,7 +138,8 @@
 
           <div class="mb-3">
             <label class="form-label fw-bold small text-muted text-uppercase">Comments & Feedback</label>
-            <textarea name="comment" [(ngModel)]="newLog.comment" class="form-control rounded-4" rows="3" placeholder="How was the weather? Any obstacles?"></textarea>
+            <textarea name="comment" [(ngModel)]="newLog.comment" class="form-control rounded-4" rows="3" placeholder="How was the weather? Any obstacles?" maxlength="1000"></textarea>
+            <div class="form-text">Optional, max 1000 characters</div>
           </div>
         </form>
       </div>

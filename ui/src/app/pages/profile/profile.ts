@@ -3,6 +3,7 @@ import { Navbar } from '../../components/navbar/navbar';
 import { CommonModule } from '@angular/common';
 import { Tour, TransportType, TourLog } from '../../models/Tour';
 import { TourService } from '../../services/tour';
+import { TourLogService, TourLogEntry } from '../../services/tourlog';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { ToastService, ToastType } from '../../services/ToastService';
@@ -17,43 +18,53 @@ import { ToastService, ToastType } from '../../services/ToastService';
 export class Profile implements OnInit, OnDestroy {
   username: string = 'User Name';
   createdTours: Tour[] = [];
-  recentLogs: Array<{ tour: Tour; log: TourLog }> = [];
+  groupedTourLogs: Map<string, TourLogEntry[]> = new Map();
   private toursSubscription?: Subscription;
+  private tourLogsSubscription?: Subscription;
 
   // Modern DI using inject()
   private tourService = inject(TourService);
+  private tourLogService = inject(TourLogService);
   private toastService = inject(ToastService);
 
-  // Modal State
+  // Modal State for Tour
   isEditModalOpen = false;
   editingTour: Tour | null = null;
   transportTypes = Object.values(TransportType);
+
+  // Modal State for TourLog
+  isEditLogModalOpen = false;
+  editingLog: TourLogEntry | null = null;
 
   constructor() {}
 
   ngOnInit() {
     this.toursSubscription = this.tourService.tours$.subscribe(tours => {
       this.createdTours = tours;
-      this.recentLogs = this.getRecentLogs(tours);
     });
-  }
 
-  /**
-   * Extracts the most recent tour logs across all tours.
-   * Flattens all logs, sorts by date, and returns the latest 5.
-   */
-  private getRecentLogs(tours: Tour[]): Array<{ tour: Tour; log: TourLog }> {
-    const allLogs = tours
-      .flatMap(tour =>
-        (tour.logs || []).map(log => ({ tour, log }))
-      )
-      .sort((a, b) => new Date(b.log.date).getTime() - new Date(a.log.date).getTime());
-
-    return allLogs.slice(0, 5);
+    this.tourLogsSubscription = this.tourLogService.tourLogs$.subscribe(() => {
+      this.groupedTourLogs = this.tourLogService.getTourLogsGroupedByTour();
+    });
   }
 
   ngOnDestroy() {
     this.toursSubscription?.unsubscribe();
+    this.tourLogsSubscription?.unsubscribe();
+  }
+
+  /**
+   * Get tour object by name for displaying grouped logs
+   */
+  getTourByName(tourName: string): Tour | undefined {
+    return this.createdTours.find(tour => tour.name === tourName);
+  }
+
+  /**
+   * Get all grouped tour names as array for iteration
+   */
+  getGroupedTourNames(): string[] {
+    return Array.from(this.groupedTourLogs.keys());
   }
 
   onDeleteTour(tourName: string): void {
@@ -71,6 +82,17 @@ export class Profile implements OnInit, OnDestroy {
 
   onSaveEdit(): void {
     if (this.editingTour) {
+      // Validate required fields for tour
+      if (!this.editingTour.name || this.editingTour.name.length < 3 ||
+          !this.editingTour.start || this.editingTour.start.length < 2 ||
+          !this.editingTour.end || this.editingTour.end.length < 2 ||
+          !this.editingTour.difficulty || !this.editingTour.transportType ||
+          !this.editingTour.description || this.editingTour.description.length < 10 ||
+          this.editingTour.distance < 0.1 || this.editingTour.estimatedTime < 1) {
+        this.toastService.show('Please fill in all required fields correctly', ToastType.Danger);
+        return;
+      }
+
       this.tourService.updateTour(this.editingTour);
       this.toastService.show(`Tour "${this.editingTour.name}" updated successfully!`, ToastType.Success);
       this.closeModal();
@@ -91,5 +113,54 @@ export class Profile implements OnInit, OnDestroy {
       total: this.createdTours.length,
       distance: this.createdTours.reduce((acc, t) => acc + t.distance, 0)
     };
+  }
+
+  // TourLog CRUD operations
+  onEditLog(log: TourLogEntry): void {
+    this.editingLog = { ...log };
+    this.isEditLogModalOpen = true;
+  }
+
+  onSaveLogEdit(): void {
+    if (this.editingLog) {
+      // Validate required fields
+      if (!this.editingLog.date || this.editingLog.duration < 1 || !this.editingLog.difficultyRating) {
+        this.toastService.show(
+          'Please fill in all required fields (Date, Duration min 1, and Difficulty Rating)',
+          ToastType.Danger
+        );
+        return;
+      }
+
+      this.tourLogService.updateTourLog(this.editingLog.id, {
+        date: this.editingLog.date,
+        comment: this.editingLog.comment,
+        duration: this.editingLog.duration,
+        difficultyRating: this.editingLog.difficultyRating
+      });
+      this.toastService.show('Tour log updated successfully!', ToastType.Success);
+      this.closeLogModal();
+    }
+  }
+
+  onCancelLogEdit(): void {
+    this.closeLogModal();
+  }
+
+  onDeleteLog(log: TourLogEntry): void {
+    const confirmed = window.confirm(`Are you sure you want to delete this log from "${log.date}"?`);
+    if (confirmed) {
+      this.tourLogService.deleteTourLog(log.id);
+      this.toastService.show('Tour log deleted successfully!', ToastType.Danger);
+    }
+  }
+
+  private closeLogModal(): void {
+    this.isEditLogModalOpen = false;
+    this.editingLog = null;
+  }
+
+  getCurrentDate(): string {
+    return new Date().toISOString().split('T')[0];
   }
 }
