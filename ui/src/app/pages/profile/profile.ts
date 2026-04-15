@@ -163,4 +163,8 @@ export class Profile implements OnInit, OnDestroy {
   getCurrentDate(): string {
     return new Date().toISOString().split('T')[0];
   }
+  downloadPicture() :void{
+
+  }
 }
+

@@ -41,7 +41,8 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
     date: new Date().toISOString().split('T')[0],
     comment: '',
     duration: 0,
-    difficultyRating: 'Moderate'
+    difficultyRating: 'Moderate',
+    image: ''
   };
 
   private map: any = null;
@@ -71,7 +72,8 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
       date: new Date().toISOString().split('T')[0],
       comment: '',
       duration: 0,
-      difficultyRating: ''
+      difficultyRating: '',
+      image: ''
     };
     this.isLogModalOpen = true;
   }
@@ -136,5 +138,17 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
 
       this.map.setView([48.2082, 16.3738], 12); // Vienna
     }, 0);
+  }
+  onFileSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      this.newLog.image = reader.result as string;
+    };
+
+    reader.readAsDataURL(file);
   }
 }

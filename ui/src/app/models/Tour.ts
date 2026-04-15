@@ -10,6 +10,7 @@ export interface TourLog {
   comment: string;
   duration: number; // in minutes
   difficultyRating: string;
+  image: string;
 }
 
 export class Tour {

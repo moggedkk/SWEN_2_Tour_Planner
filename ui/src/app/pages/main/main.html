@@ -146,7 +146,8 @@
           </div>
         </form>
       </div>
-      <div class="modal-footer border-0 p-4 pt-0">
+      <div class="modal-footer border-0 p-4 pt-0 d-flex gap-2">
+        <input type="file" class="form-control" accept="image/png, image/jpeg" (change)="onFileSelected($event)">
         <button type="button" class="btn btn-light rounded-pill px-4" (click)="closeLogModal()">Cancel</button>
         <button type="button" class="btn btn-success rounded-pill px-4" (click)="saveLog()">Save Experience</button>
       </div>
