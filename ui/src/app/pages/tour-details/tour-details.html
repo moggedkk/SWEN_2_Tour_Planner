@@ -1,1 +1,56 @@
-<p>tour-details works!</p>
+<app-navbar></app-navbar>
+
+<div class="container py-4">
+
+  <button class="btn btn-link ps-0 text-decoration-none mb-3"
+          (click)="router.navigate(['/main'])">
+    ← Back to tours
+  </button>
+
+  <!-- Map -->
+  <div id="tour-map" class="w-100 rounded mb-4" style="height: 300px;"></div>
+
+  <!-- Title row -->
+  <div class="d-flex align-items-center justify-content-between mb-1">
+    <h2 class="mb-0">{{ tour?.name }}</h2>
+    <span class="badge bg-secondary">{{ tour?.difficulty }}</span>
+  </div>
+  <p class="text-muted mb-4">{{ tour?.start }} → {{ tour?.end }} &nbsp;·&nbsp; {{ tour?.transportType }}</p>
+
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="card text-center">
+        <div class="card-body py-2">
+          <div class="small text-muted">Distance</div>
+          <div class="fw-semibold">
+            {{ tour?.distance ? (tour.distance / 1000 | number:'1.0-1') + ' km' : '—' }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center">
+        <div class="card-body py-2">
+          <div class="small text-muted">Est. time</div>
+          <div class="fw-semibold">
+            {{ tour?.estimatedTime ? (tour.estimatedTime / 60 | number:'1.0-0') + ' min' : '—' }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Description -->
+  <h6 class="text-uppercase text-muted small mb-1">About</h6>
+  <p>{{ tour?.description }}</p>
+
+  <hr>
+
+
+
+  <ng-template #noLogs>
+    <p class="text-muted small">No logs yet for this tour.</p>
+  </ng-template>
+
+</div>

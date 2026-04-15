@@ -7,6 +7,7 @@ import { TourLogService } from '../../services/tourlog';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { ToastService, ToastType } from '../../services/ToastService';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-main',
@@ -17,6 +18,7 @@ import { ToastService, ToastType } from '../../services/ToastService';
 })
 export class Main implements AfterViewInit, OnInit, OnDestroy {
   // Services
+  public router = inject(Router);
   private tourService = inject(TourService);
   private tourLogService = inject(TourLogService);
   private toastService = inject(ToastService);

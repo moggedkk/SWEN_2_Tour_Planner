@@ -28,11 +28,12 @@ export class Createtours {
     estimatedTime: 0
   };
 
-  // Expose TransportType enum to template  
+  // Expose TransportType enum to template
   transportTypes = Object.values(TransportType);
 
   onSubmit(): void {
     const newTour = new Tour(
+      crypto.randomUUID(),
       this.tourForm.name,
       this.tourForm.start,
       this.tourForm.end,
