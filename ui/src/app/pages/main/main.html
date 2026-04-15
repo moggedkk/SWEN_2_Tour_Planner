@@ -49,6 +49,9 @@
       <h3 class="fw-bold mb-0">Recommended Tours</h3>
       <p class="text-muted mb-0">Discover the best paths matched for you</p>
     </div>
+    <button (click)="exportTours()" class="btn btn-outline-primary btn-md rounded-pill px-3">
+      Export tours
+    </button>
     <span class="badge bg-light text-dark shadow-sm px-3 py-2 rounded-pill">
       {{ filteredTours.length }} tours found
     </span>

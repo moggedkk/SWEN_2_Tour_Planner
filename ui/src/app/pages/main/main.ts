@@ -151,4 +151,10 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
 
     reader.readAsDataURL(file);
   }
+
+  // Export tours
+  exportTours(): void {
+
+    this.tourService.exportTours();
+  }
 }
