@@ -1,21 +1,21 @@
 package com.backend.backend.controller;
 
 import com.backend.backend.model.User;
-import com.backend.backend.service.UserService;
+import com.backend.backend.service.declaration.IUserService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
 @CrossOrigin
 public class UserController {
-    UserService userService;
-    public  UserController(UserService userService){
+    private final IUserService userService;
+    public  UserController(IUserService userService){
         this.userService = userService;
     }
 
     @PostMapping
     public User register(@RequestBody User user) {
-        this.userService.RegisterUser(user);
+        this.userService.registerUser(user);
         return user;
     }
 }
