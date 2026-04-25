@@ -18,4 +18,8 @@ public class UserController {
         this.userService.registerUser(user);
         return user;
     }
+    @GetMapping
+    public String hello() {
+        return "Hello";
+    }
 }
