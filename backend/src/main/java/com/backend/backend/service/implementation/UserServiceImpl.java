@@ -7,12 +7,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements IUserService {
     @Override
-    public void registerUser(User user) {
+    public User registerUser(User user) {
 
+        return user;
     }
 
     @Override
-    public void loginUser(LoginRequest logReq) {
+    public User findUserByUsername(String username) {
+        return null;
+    }
+
+    @Override
+    public void deleteUser(User user) {
 
     }
+
+
 }

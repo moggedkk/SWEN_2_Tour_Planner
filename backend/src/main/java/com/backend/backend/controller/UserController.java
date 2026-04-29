@@ -22,4 +22,9 @@ public class UserController {
     public String hello() {
         return "Hello";
     }
+
+    @GetMapping("/test")
+    public String test() {
+        return "Backend is accessible!";
+    }
 }

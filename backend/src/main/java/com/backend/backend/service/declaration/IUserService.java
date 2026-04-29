@@ -4,6 +4,7 @@ import com.backend.backend.model.LoginRequest;
 import com.backend.backend.model.User;
 
 public interface IUserService {
-    void registerUser(User user);
-    void loginUser(LoginRequest logReq);
+    User registerUser(User user);
+    User findUserByUsername(String username);
+    void deleteUser(User user);
 }
