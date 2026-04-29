@@ -12,13 +12,13 @@ import java.util.Date;
 
 @Component
 public class JwtConfig {
-    private final String secretKey = "7f9a8c2d4e6b1a9f"; // Should be savely stored, gonna do later
-    public String createJWT(){
+    private final String secretKey = "7f9a8c2d4e6b1a9f3d2e5c8b0a4f7e1d"; // Should be safely stored, gonna do later
+    public String createJWT(String username){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretKey);
             return JWT.create()
                     .withIssuer("my-app")
-                    .withSubject("username")
+                    .withSubject(username)
                     .withIssuedAt(new Date())
                     .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1h
                     .sign(algorithm);
