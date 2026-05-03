@@ -1,16 +1,16 @@
-package com.backend.backend.model;
+package com.backend.backend.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class RegisterRequest {
     private String username;
-    private String hash;
-    private String token;
+    private String email;
+    private String password;
 }

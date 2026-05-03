@@ -1,4 +1,4 @@
-package com.backend.backend.model;
+package com.backend.backend.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,5 +11,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class LoginRequest {
     private String username;
-    private String hash;
+    private String password;
 }

@@ -1,7 +1,6 @@
 package com.backend.backend.service.implementation;
 
-import com.backend.backend.model.LoginRequest;
-import com.backend.backend.model.User;
+import com.backend.backend.model.entity.User;
 import com.backend.backend.service.declaration.IUserService;
 import org.springframework.stereotype.Service;
 @Service

@@ -1,8 +1,7 @@
 package com.backend.backend.controller;
 
-import com.backend.backend.model.LoginRequest;
+import com.backend.backend.model.dto.LoginRequest;
 import com.backend.backend.service.declaration.ISessionService;
-import com.backend.backend.service.declaration.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

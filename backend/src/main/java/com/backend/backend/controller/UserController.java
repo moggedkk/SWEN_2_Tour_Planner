@@ -1,6 +1,6 @@
 package com.backend.backend.controller;
 
-import com.backend.backend.model.User;
+import com.backend.backend.model.entity.User;
 import com.backend.backend.service.declaration.IUserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,9 +14,9 @@ public class UserController {
     }
 
     @PostMapping
-    public User register(@RequestBody User user) {
+    public String register(@RequestBody User user) {
         this.userService.registerUser(user);
-        return user;
+        return "jwt";
     }
     @GetMapping
     public String hello() {

@@ -1,4 +1,4 @@
-package com.backend.backend.jwt;
+package com.backend.backend.security.jwt;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.FilterChain;
