@@ -1,5 +1,6 @@
 *.idea
 .env
+backend/src/main/resources/application.properties
 # Node / npm
 node_modules/
 npm-debug.log*
