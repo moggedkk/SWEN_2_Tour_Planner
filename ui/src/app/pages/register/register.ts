@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/AuthService';
 
 @Component({
   selector: 'app-register',
@@ -12,15 +13,15 @@ import { CommonModule } from '@angular/common';
 })
 export class Register {
   username = '';
+  email = '';
   password = '';
   confirmPassword = '';
   errorMessage = '';
-  successMessage = '';
 
-  constructor(private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   onRegister() {
-    if (!this.username || !this.password || !this.confirmPassword) {
+    if (!this.username || !this.email || !this.password || !this.confirmPassword) {
       this.errorMessage = 'Please fill in all fields';
       return;
     }
@@ -30,14 +31,12 @@ export class Register {
       return;
     }
 
-    // TODO: Connect to actual registration service
-    console.log('Registering user:', this.username);
-    
-    this.errorMessage = '';
-    this.successMessage = 'Registration successful! Redirecting to login...';
-
-    setTimeout(() => {
-      this.router.navigate(['/']);
-    }, 2000);
+    this.authService.register(this.username, this.email, this.password).subscribe({
+      next: () => this.router.navigate(['/main']),
+      error: err => {
+        this.errorMessage =
+          err.status === 409 ? 'Username already taken' : 'Registration failed. Please try again.';
+      },
+    });
   }
 }
