@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Navbar } from '../../components/navbar/navbar';
 import { TourActions } from '../../components/tour-actions/tour-actions';
 import { TourService } from '../../services/tour';
 import { Tour, TransportType } from '../../models/Tour';
 import { CommonModule } from '@angular/common';
+import { ToastService, ToastType } from '../../services/ToastService';
 
 @Component({
   selector: 'app-createtours',
@@ -13,10 +14,9 @@ import { CommonModule } from '@angular/common';
   styleUrl: './createtours.css',
 })
 export class Createtours {
-  constructor(private tourService: TourService) {}
-  @Output() tourCreated = new EventEmitter<Tour>();
+  private tourService = inject(TourService);
+  private toastService = inject(ToastService);
 
-  // Form model
   tourForm = {
     name: '',
     start: '',
@@ -28,12 +28,11 @@ export class Createtours {
     estimatedTime: 0
   };
 
-  // Expose TransportType enum to template
   transportTypes = Object.values(TransportType);
 
   onSubmit(): void {
     const newTour = new Tour(
-      crypto.randomUUID(),
+      0,
       this.tourForm.name,
       this.tourForm.start,
       this.tourForm.end,
@@ -44,18 +43,23 @@ export class Createtours {
       this.tourForm.estimatedTime
     );
 
-    this.tourService.addTour(newTour);
-
-    // Reset form
-    this.tourForm = {
-      name: '',
-      start: '',
-      end: '',
-      difficulty: '',
-      description: '',
-      transportType: TransportType.Foot,
-      distance: 0,
-      estimatedTime: 0
-    };
+    this.tourService.addTour(newTour).subscribe({
+      next: () => {
+        this.toastService.show(`Tour "${newTour.name}" created!`, ToastType.Success);
+        this.tourForm = {
+          name: '',
+          start: '',
+          end: '',
+          difficulty: '',
+          description: '',
+          transportType: TransportType.Foot,
+          distance: 0,
+          estimatedTime: 0
+        };
+      },
+      error: () => {
+        this.toastService.show('Failed to create tour. Please try again.', ToastType.Danger);
+      }
+    });
   }
 }

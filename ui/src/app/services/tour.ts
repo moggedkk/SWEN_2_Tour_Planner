@@ -1,56 +1,109 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { Tour } from '../models/Tour';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Tour, TransportType } from '../models/Tour';
 
-@Injectable({
-  providedIn: 'root',
-})
+interface TourRequest {
+  name: string;
+  start: string;
+  end: string;
+  description: string;
+  difficulty: string;
+  transportType: string;
+  distance: number;
+  estimatedTime: number;
+}
+
+interface TourResponse {
+  id: number;
+  name: string;
+  start: string;
+  end: string;
+  description: string;
+  difficulty: string;
+  transportType: string;
+  distance: number;
+  estimatedTime: number;
+}
+
+@Injectable({ providedIn: 'root' })
 export class TourService {
-  // BehaviorSubject acts as a "mini-database" in the frontend.
-  // It stores the current tours and notifies all subscribers when they change.
-  private toursSubject = new BehaviorSubject<Tour[]>(Tour.GetTours());
+  private readonly apiUrl = 'http://localhost:8080/api/tours';
+  private readonly http = inject(HttpClient);
 
-  // Components subscribe to this Observable to get real-time updates.
+  private toursSubject = new BehaviorSubject<Tour[]>([]);
   tours$: Observable<Tour[]> = this.toursSubject.asObservable();
 
-  /**
-   * CREATE: Adds a new tour.
-   * This is what goes in a service: the logic for how data is updated.
-   */
-  addTour(tour: Tour): void {
-    const currentTours = this.toursSubject.value;
-    // We create a new array to trigger Angular's change detection properly.
-    this.toursSubject.next([...currentTours, tour]);
+  constructor() {
+    this.loadTours();
   }
 
-  /**
-   * READ: Gets the current list of tours (snapshot).
-   */
+  loadTours(): void {
+    this.http.get<TourResponse[]>(this.apiUrl).subscribe(responses => {
+      this.toursSubject.next(responses.map(r => this.fromResponse(r)));
+    });
+  }
+
+  addTour(tour: Tour): Observable<Tour> {
+    const request = this.toRequest(tour);
+    return this.http.post<TourResponse>(this.apiUrl, request).pipe(
+      map(r => this.fromResponse(r)),
+      tap(created => {
+        this.toursSubject.next([...this.toursSubject.value, created]);
+      })
+    );
+  }
+
+  updateTour(tour: Tour): Observable<Tour> {
+    const request = this.toRequest(tour);
+    return this.http.put<TourResponse>(`${this.apiUrl}/${tour.id}`, request).pipe(
+      map(r => this.fromResponse(r)),
+      tap(updated => {
+        const tours = this.toursSubject.value.map(t => t.id === updated.id ? updated : t);
+        this.toursSubject.next(tours);
+      })
+    );
+  }
+
+  deleteTour(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => {
+        this.toursSubject.next(this.toursSubject.value.filter(t => t.id !== id));
+      })
+    );
+  }
+
   getToursSnapshot(): Tour[] {
     return this.toursSubject.value;
   }
 
-  /**
-   * DELETE: Removes a tour by name.
-   */
-  deleteTour(tourName: string): void {
-    const currentTours = this.toursSubject.value;
-    const filteredTours = currentTours.filter(t => t.name !== tourName);
-    this.toursSubject.next(filteredTours);
+  exportTours(): void {}
+
+  private fromResponse(r: TourResponse): Tour {
+    return new Tour(
+      r.id,
+      r.name,
+      r.start,
+      r.end,
+      r.difficulty,
+      r.description,
+      r.transportType as TransportType,
+      r.distance,
+      r.estimatedTime
+    );
   }
 
-  /**
-   * UPDATE: Updates an existing tour.
-   */
-  updateTour(updatedTour: Tour): void {
-    const currentTours = this.toursSubject.value;
-    const index = currentTours.findIndex(t => t.name === updatedTour.name);
-    if (index !== -1) {
-      currentTours[index] = updatedTour;
-      this.toursSubject.next([...currentTours]);
-    }
-  }
-  exportTours(): void{
-
+  private toRequest(tour: Tour): TourRequest {
+    return {
+      name: tour.name,
+      start: tour.start,
+      end: tour.end,
+      description: tour.description,
+      difficulty: tour.difficulty,
+      transportType: tour.transportType,
+      distance: tour.distance,
+      estimatedTime: tour.estimatedTime
+    };
   }
 }

@@ -14,7 +14,7 @@ export interface TourLog {
 }
 
 export class Tour {
-  public id: string;
+  public id: number;
   public name: string;
   public start: string;
   public end: string;
@@ -29,7 +29,7 @@ export class Tour {
   public routeInfo?: any;      // To store the GeoJSON/Polyline for Leaflet display
 
   constructor(
-    id: string,
+    id: number,
     name: string,
     start: string,
     end: string,

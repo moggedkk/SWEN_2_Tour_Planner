@@ -67,11 +67,13 @@ export class Profile implements OnInit, OnDestroy {
     return Array.from(this.groupedTourLogs.keys());
   }
 
-  onDeleteTour(tourName: string): void {
-    const confirmed = window.confirm(`Are you sure you want to delete "${tourName}"?`);
+  onDeleteTour(tour: Tour): void {
+    const confirmed = window.confirm(`Are you sure you want to delete "${tour.name}"?`);
     if (confirmed) {
-      this.tourService.deleteTour(tourName);
-      this.toastService.show(`Tour "${tourName}" deleted successfully!`, ToastType.Danger);
+      this.tourService.deleteTour(tour.id).subscribe({
+        next: () => this.toastService.show(`Tour "${tour.name}" deleted successfully!`, ToastType.Danger),
+        error: () => this.toastService.show('Failed to delete tour.', ToastType.Danger)
+      });
     }
   }
 
@@ -82,7 +84,6 @@ export class Profile implements OnInit, OnDestroy {
 
   onSaveEdit(): void {
     if (this.editingTour) {
-      // Validate required fields for tour
       if (!this.editingTour.name || this.editingTour.name.length < 3 ||
           !this.editingTour.start || this.editingTour.start.length < 2 ||
           !this.editingTour.end || this.editingTour.end.length < 2 ||
@@ -93,9 +94,13 @@ export class Profile implements OnInit, OnDestroy {
         return;
       }
 
-      this.tourService.updateTour(this.editingTour);
-      this.toastService.show(`Tour "${this.editingTour.name}" updated successfully!`, ToastType.Success);
-      this.closeModal();
+      this.tourService.updateTour(this.editingTour).subscribe({
+        next: () => {
+          this.toastService.show(`Tour "${this.editingTour!.name}" updated successfully!`, ToastType.Success);
+          this.closeModal();
+        },
+        error: () => this.toastService.show('Failed to update tour.', ToastType.Danger)
+      });
     }
   }
 
