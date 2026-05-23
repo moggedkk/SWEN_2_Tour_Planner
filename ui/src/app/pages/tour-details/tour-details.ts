@@ -23,9 +23,9 @@ export class TourDetails implements OnInit, AfterViewInit{
     ngOnInit(): void {
       const tourName = this.route.snapshot.paramMap.get('id');
       if(tourName){
-        const cleanedTourId  = decodeURIComponent(tourName).toLowerCase();
+        const tourId = Number(decodeURIComponent(tourName));
         const tours = this.tourService.getToursSnapshot();
-        this.tour = tours.find(tour => tour.id.toLowerCase() == cleanedTourId);
+        this.tour = tours.find(tour => tour.id === tourId);
         if(!this.tour){
           this.router.navigate(['/main']);
         }
