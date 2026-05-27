@@ -19,7 +19,7 @@ public class SessionController {
 
     @PostMapping
     public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest request) {
-        String token = sessionService.login(request);
-        return ResponseEntity.ok(new TokenResponse(token));
+            String token = sessionService.login(request);
+            return ResponseEntity.ok(new TokenResponse(token));         
     }
 }
