@@ -37,6 +37,6 @@ public class SessionServiceImpl implements ISessionService {
 
     @Override
     public void refreshToken(User user) {
-        // Not yet implemented.
+        // Not yet implemented. Maybe at the end
     }
 }
