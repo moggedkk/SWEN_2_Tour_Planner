@@ -8,8 +8,8 @@ import { AuthService } from '../../services/AuthService';
   styleUrl: './navbar.css',
 })
 export class Navbar {
-    private tourService = inject(AuthService);
+    private authService = inject(AuthService);
     logout() : void{
-      this.tourService.logout();
+      this.authService.logout();
     }
 }

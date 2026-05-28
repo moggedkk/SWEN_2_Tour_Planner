@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, inject, AfterViewInit } from '@angular/co
 import { Navbar } from '../../components/navbar/navbar';
 import { CommonModule } from '@angular/common';
 import { Tour, TransportType, TourLog } from '../../models/Tour';
-import { TourService } from '../../services/tour';
+import { TourService } from '../../services/TourService';
 import { TourLogService } from '../../services/tourlog';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';

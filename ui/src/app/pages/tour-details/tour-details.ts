@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, inject } from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import {Navbar} from '../../components/navbar/navbar';
 import {Tour} from '../../models/Tour';
-import {TourService} from '../../services/tour';
+import {TourService} from '../../services/TourService';
 import {CommonModule} from '@angular/common';
 
 @Component({
