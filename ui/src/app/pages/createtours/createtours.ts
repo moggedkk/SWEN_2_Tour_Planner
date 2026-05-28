@@ -31,17 +31,17 @@ export class Createtours {
   transportTypes = Object.values(TransportType);
 
   onSubmit(): void {
-    const newTour = new Tour(
-      0,
-      this.tourForm.name,
-      this.tourForm.start,
-      this.tourForm.end,
-      this.tourForm.difficulty,
-      this.tourForm.description,
-      this.tourForm.transportType,
-      this.tourForm.distance,
-      this.tourForm.estimatedTime
-    );
+    const newTour: Tour = {
+      name: this.tourForm.name,
+      start: this.tourForm.start,
+      end: this.tourForm.end,
+      difficulty: this.tourForm.difficulty,
+      description: this.tourForm.description,
+      transportType: this.tourForm.transportType,
+      distance: this.tourForm.distance,
+      estimatedTime: this.tourForm.estimatedTime,
+      logs: []
+    };
 
     this.tourService.addTour(newTour).subscribe({
       next: () => {

@@ -81,17 +81,7 @@ export class TourService {
   exportTours(): void {}
 
   private fromResponse(r: TourResponse): Tour {
-    return new Tour(
-      r.id,
-      r.name,
-      r.start,
-      r.end,
-      r.difficulty,
-      r.description,
-      r.transportType as TransportType,
-      r.distance,
-      r.estimatedTime
-    );
+    return { ...r, transportType: r.transportType as TransportType, logs: [] };
   }
 
   private toRequest(tour: Tour): TourRequest {
