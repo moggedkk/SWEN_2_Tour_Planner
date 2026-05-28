@@ -34,11 +34,6 @@ public class SessionServiceImpl implements ISessionService {
         return jwtConfig.createJWT(user.getUsername());
     }
 
-    @Override
-    public void logout() {
-        // Token invalidation is a client-side concern with stateless JWT.
-        // Implement a token denylist here if revocation is needed in the future.
-    }
 
     @Override
     public void refreshToken(User user) {

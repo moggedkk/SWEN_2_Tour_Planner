@@ -5,6 +5,5 @@ import com.backend.backend.model.entity.User;
 
 public interface ISessionService {
     public String login(LoginRequest loginRequest);
-    public void logout();
     public void refreshToken(User user);
 }
