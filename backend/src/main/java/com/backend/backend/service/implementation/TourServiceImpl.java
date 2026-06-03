@@ -1,6 +1,7 @@
 package com.backend.backend.service.implementation;
 
 import com.backend.backend.exception.TourNotFoundException;
+import com.backend.backend.model.dto.RouteResult;
 import com.backend.backend.model.dto.TourRequest;
 import com.backend.backend.model.dto.TourResponse;
 import com.backend.backend.model.entity.Difficulty;
@@ -10,8 +11,11 @@ import com.backend.backend.model.entity.User;
 import com.backend.backend.repository.DifficultyRepository;
 import com.backend.backend.repository.TourRepository;
 import com.backend.backend.repository.TourTransportTypeRepository;
+import com.backend.backend.service.declaration.IOpenRouteService;
 import com.backend.backend.service.declaration.ITourService;
 import com.backend.backend.service.declaration.IUserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -24,15 +28,21 @@ public class TourServiceImpl implements ITourService {
     private final DifficultyRepository difficultyRepository;
     private final TourTransportTypeRepository transportTypeRepository;
     private final IUserService userService;
+    private final IOpenRouteService openRouteService;
+    private final ObjectMapper objectMapper;
 
     public TourServiceImpl(TourRepository tourRepository,
                            DifficultyRepository difficultyRepository,
                            TourTransportTypeRepository transportTypeRepository,
-                           IUserService userService) {
+                           IUserService userService,
+                           IOpenRouteService openRouteService,
+                           ObjectMapper objectMapper) {
         this.tourRepository = tourRepository;
         this.difficultyRepository = difficultyRepository;
         this.transportTypeRepository = transportTypeRepository;
         this.userService = userService;
+        this.openRouteService = openRouteService;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -40,13 +50,16 @@ public class TourServiceImpl implements ITourService {
     public TourResponse createTour(TourRequest request, String username) {
         User user = userService.findUserByUsername(username).orElseThrow();
 
+        RouteResult route = openRouteService.getRoute(request.getStart(), request.getEnd(), request.getTransportType());
+
         Tour tour = new Tour();
         tour.setTourName(request.getName());
         tour.setStartLocation(request.getStart());
         tour.setEndLocation(request.getEnd());
         tour.setDescription(request.getDescription());
-        tour.setDistance(request.getDistance());
-        tour.setEstimatedTime(request.getEstimatedTime());
+        tour.setDistance(route.distance());
+        tour.setEstimatedTime(route.estimatedTime());
+        tour.setRouteGeometry(route.routeGeometryJson());
         tour.setUser(user);
         Tour saved = tourRepository.save(tour);
 
@@ -88,12 +101,15 @@ public class TourServiceImpl implements ITourService {
         Tour tour = tourRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new TourNotFoundException(id));
 
+        RouteResult route = openRouteService.getRoute(request.getStart(), request.getEnd(), request.getTransportType());
+
         tour.setTourName(request.getName());
         tour.setStartLocation(request.getStart());
         tour.setEndLocation(request.getEnd());
         tour.setDescription(request.getDescription());
-        tour.setDistance(request.getDistance());
-        tour.setEstimatedTime(request.getEstimatedTime());
+        tour.setDistance(route.distance());
+        tour.setEstimatedTime(route.estimatedTime());
+        tour.setRouteGeometry(route.routeGeometryJson());
 
         Difficulty difficulty = tour.getDifficulty();
         difficulty.setDifficultyValue(request.getDifficulty());
@@ -116,7 +132,6 @@ public class TourServiceImpl implements ITourService {
         Difficulty difficulty = tour.getDifficulty();
         TourTransportType transportType = tour.getTransportType();
 
-        // Null out the FKs first so the child rows can be deleted without constraint violation
         tour.setDifficulty(null);
         tour.setTransportType(null);
         tourRepository.save(tour);
@@ -130,6 +145,16 @@ public class TourServiceImpl implements ITourService {
     private TourResponse toResponse(Tour tour) {
         String difficultyValue = tour.getDifficulty() != null ? tour.getDifficulty().getDifficultyValue() : null;
         String transportTypeValue = tour.getTransportType() != null ? tour.getTransportType().getTransportTypeValue() : null;
+
+        Object routeGeometry = null;
+        if (tour.getRouteGeometry() != null) {
+            try {
+                routeGeometry = objectMapper.readValue(tour.getRouteGeometry(), Object.class);
+            } catch (JsonProcessingException e) {
+                // stored geometry is malformed — return null rather than failing
+            }
+        }
+
         return new TourResponse(
                 tour.getId(),
                 tour.getTourName(),
@@ -139,7 +164,8 @@ public class TourServiceImpl implements ITourService {
                 difficultyValue,
                 transportTypeValue,
                 tour.getDistance(),
-                tour.getEstimatedTime()
+                tour.getEstimatedTime(),
+                routeGeometry
         );
     }
 }

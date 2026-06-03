@@ -15,4 +15,5 @@ public class TourResponse {
     private String transportType;
     private double distance;
     private int estimatedTime;
+    private Object routeGeometry;
 }

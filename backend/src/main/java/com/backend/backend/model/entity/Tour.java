@@ -44,4 +44,7 @@ public class Tour {
     @OneToOne
     @JoinColumn(name = "transport_type_id")
     private TourTransportType transportType;
+
+    @Column(name = "route_geometry", columnDefinition = "text")
+    private String routeGeometry;
 }
