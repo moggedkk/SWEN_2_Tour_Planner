@@ -24,8 +24,6 @@ export class Createtours {
     difficulty: '',
     description: '',
     transportType: TransportType.Foot,
-    distance: 0,
-    estimatedTime: 0
   };
 
   transportTypes = Object.values(TransportType);
@@ -38,8 +36,8 @@ export class Createtours {
       difficulty: this.tourForm.difficulty,
       description: this.tourForm.description,
       transportType: this.tourForm.transportType,
-      distance: this.tourForm.distance,
-      estimatedTime: this.tourForm.estimatedTime,
+      distance: 0,
+      estimatedTime: 0,
       logs: []
     };
 
@@ -53,12 +51,11 @@ export class Createtours {
           difficulty: '',
           description: '',
           transportType: TransportType.Foot,
-          distance: 0,
-          estimatedTime: 0
         };
       },
-      error: () => {
-        this.toastService.show('Failed to create tour. Please try again.', ToastType.Danger);
+      error: (err) => {
+        const message = err.error?.message ?? 'Failed to create tour. Please try again.';
+        this.toastService.show(message, ToastType.Danger);
       }
     });
   }

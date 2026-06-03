@@ -11,8 +11,6 @@ interface TourRequest {
   description: string;
   difficulty: string;
   transportType: string;
-  distance: number;
-  estimatedTime: number;
 }
 
 interface TourResponse {
@@ -25,6 +23,7 @@ interface TourResponse {
   transportType: string;
   distance: number;
   estimatedTime: number;
+  routeGeometry?: any;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -81,7 +80,7 @@ export class TourService {
   exportTours(): void {}
 
   private fromResponse(r: TourResponse): Tour {
-    return { ...r, transportType: r.transportType as TransportType, logs: [] };
+    return { ...r, transportType: r.transportType as TransportType, logs: [], routeInfo: r.routeGeometry };
   }
 
   private toRequest(tour: Tour): TourRequest {
@@ -92,8 +91,6 @@ export class TourService {
       description: tour.description,
       difficulty: tour.difficulty,
       transportType: tour.transportType,
-      distance: tour.distance,
-      estimatedTime: tour.estimatedTime
     };
   }
 }

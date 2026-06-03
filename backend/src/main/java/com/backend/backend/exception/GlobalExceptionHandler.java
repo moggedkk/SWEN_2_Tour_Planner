@@ -23,4 +23,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleTourNotFound(TourNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage()));
     }
+
+    @ExceptionHandler(RouteNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleRouteNotFound(RouteNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(new ErrorResponse(ex.getMessage()));
+    }
 }

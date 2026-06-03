@@ -86,35 +86,6 @@
       </select>
     </div>
 
-    <div class="mb-3">
-      <label for="tourDistance" class="form-label">Distance (km) <span class="text-danger">*</span></label>
-      <input
-        type="number"
-        class="form-control"
-        id="tourDistance"
-        name="distance"
-        [(ngModel)]="tourForm.distance"
-        required
-        min="0.1"
-        max="10000"
-        step="0.1">
-      <div class="form-text">Must be between 0.1 and 10,000 km</div>
-    </div>
-
-    <div class="mb-3">
-      <label for="tourEstimatedTime" class="form-label">Estimated Time (minutes) <span class="text-danger">*</span></label>
-      <input
-        type="number"
-        class="form-control"
-        id="tourEstimatedTime"
-        name="estimatedTime"
-        [(ngModel)]="tourForm.estimatedTime"
-        required
-        min="1"
-        max="100000">
-      <div class="form-text">Must be at least 1 minute</div>
-    </div>
-
     <button type="submit" class="btn btn-primary" [disabled]="!tourFormElement.form.valid">
       Create Tour
     </button>

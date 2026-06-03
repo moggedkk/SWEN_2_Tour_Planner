@@ -34,7 +34,7 @@
         <div class="card-body py-2">
           <div class="small text-muted">Est. time</div>
           <div class="fw-semibold">
-            {{ tour?.estimatedTime ? (tour.estimatedTime / 60 | number:'1.0-0') + ' min' : '—' }}
+            {{ tour?.estimatedTime ? formatDuration(tour.estimatedTime) : '—' }}
           </div>
         </div>
       </div>

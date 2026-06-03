@@ -1,5 +1,6 @@
 package com.backend.backend.service.implementation;
 
+import com.backend.backend.exception.RouteNotFoundException;
 import com.backend.backend.model.dto.RouteResult;
 import com.backend.backend.service.declaration.IOpenRouteService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
@@ -24,16 +26,20 @@ public class OpenRouteServiceImpl implements IOpenRouteService {
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
 
-    public OpenRouteServiceImpl(RestClient.Builder builder, ObjectMapper objectMapper) {
-        this.restClient = builder.baseUrl(ORS_BASE_URL).build();
-        this.objectMapper = objectMapper;
+    public OpenRouteServiceImpl() {
+        this.restClient = RestClient.builder().baseUrl(ORS_BASE_URL).build();
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
     public RouteResult getRoute(String from, String to, String transportType) {
         double[] fromCoords = geocode(from);
         double[] toCoords = geocode(to);
-        return fetchRoute(fromCoords, toCoords, transportType);
+        try {
+            return fetchRoute(fromCoords, toCoords, transportType);
+        } catch (HttpClientErrorException e) {
+            throw new RouteNotFoundException(from, to);
+        }
     }
 
     private double[] geocode(String place) {

@@ -16,6 +16,4 @@ public class TourRequest {
     private String description;
     private String difficulty;
     private String transportType;
-    private double distance;
-    private int estimatedTime;
 }

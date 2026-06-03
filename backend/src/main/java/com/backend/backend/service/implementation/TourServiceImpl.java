@@ -29,20 +29,18 @@ public class TourServiceImpl implements ITourService {
     private final TourTransportTypeRepository transportTypeRepository;
     private final IUserService userService;
     private final IOpenRouteService openRouteService;
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public TourServiceImpl(TourRepository tourRepository,
                            DifficultyRepository difficultyRepository,
                            TourTransportTypeRepository transportTypeRepository,
                            IUserService userService,
-                           IOpenRouteService openRouteService,
-                           ObjectMapper objectMapper) {
+                           IOpenRouteService openRouteService) {
         this.tourRepository = tourRepository;
         this.difficultyRepository = difficultyRepository;
         this.transportTypeRepository = transportTypeRepository;
         this.userService = userService;
         this.openRouteService = openRouteService;
-        this.objectMapper = objectMapper;
     }
 
     @Override

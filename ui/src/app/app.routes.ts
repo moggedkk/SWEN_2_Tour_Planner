@@ -6,11 +6,11 @@ import { Profile } from './pages/profile/profile';
 import { Createtours } from './pages/createtours/createtours';
 import { Import } from './pages/import/import';
 import { TourDetails } from './pages/tour-details/tour-details';
-import { authGuard } from './guards/auth.guard';
+import { authGuard, guestGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', component: Login },
-  { path: 'register', component: Register },
+  { path: '', component: Login, canActivate: [guestGuard] },
+  { path: 'register', component: Register, canActivate: [guestGuard] },
   { path: 'main', component: Main, canActivate: [authGuard] },
   { path: 'profile', component: Profile, canActivate: [authGuard] },
   { path: 'createtours', component: Createtours, canActivate: [authGuard] },

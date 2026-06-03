@@ -70,7 +70,7 @@ export class Profile implements OnInit, OnDestroy {
   onDeleteTour(tour: Tour): void {
     const confirmed = window.confirm(`Are you sure you want to delete "${tour.name}"?`);
     if (confirmed) {
-      this.tourService.deleteTour(tour.id).subscribe({
+      this.tourService.deleteTour(tour.id!).subscribe({
         next: () => this.toastService.show(`Tour "${tour.name}" deleted successfully!`, ToastType.Danger),
         error: () => this.toastService.show('Failed to delete tour.', ToastType.Danger)
       });

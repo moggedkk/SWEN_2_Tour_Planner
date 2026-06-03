@@ -34,6 +34,12 @@ export class TourDetails implements OnInit, AfterViewInit{
         this.router.navigate(['/main']);
       }
     }
+    formatDuration(seconds: number): string {
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      return h > 0 ? `${h}h ${m}min` : `${m}min`;
+    }
+
     async ngAfterViewInit() {
       if (typeof window === 'undefined' || !this.tour) return;
 
@@ -56,8 +62,12 @@ export class TourDetails implements OnInit, AfterViewInit{
           attribution: '© OpenStreetMap contributors',
         }).addTo(this.map);
 
-        // Center map on Vienna (placeholder)
-        this.map.setView([48.2082, 16.3738], 10);
+        if (this.tour.routeInfo) {
+          const routeLayer = L.geoJSON(this.tour.routeInfo).addTo(this.map);
+          this.map.fitBounds(routeLayer.getBounds());
+        } else {
+          this.map.setView([48.2082, 16.3738], 10);
+        }
       }, 0);
     }
 
