@@ -17,10 +17,12 @@ import com.backend.backend.service.declaration.IUserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class TourServiceImpl implements ITourService {
 
@@ -46,8 +48,10 @@ public class TourServiceImpl implements ITourService {
     @Override
     @Transactional
     public TourResponse createTour(TourRequest request, String username) {
+        log.info("Creating tour '{}' for user '{}'", request.getName(), username);
         User user = userService.findUserByUsername(username).orElseThrow();
 
+        log.debug("Fetching route from '{}' to '{}' via '{}'", request.getStart(), request.getEnd(), request.getTransportType());
         RouteResult route = openRouteService.getRoute(request.getStart(), request.getEnd(), request.getTransportType());
 
         Tour tour = new Tour();
@@ -73,7 +77,9 @@ public class TourServiceImpl implements ITourService {
 
         saved.setDifficulty(savedDifficulty);
         saved.setTransportType(savedTransportType);
-        return toResponse(tourRepository.save(saved));
+        TourResponse response = toResponse(tourRepository.save(saved));
+        log.info("Tour '{}' created with id={}", response.getName(), response.getId());
+        return response;
     }
 
     @Override
@@ -95,6 +101,7 @@ public class TourServiceImpl implements ITourService {
     @Override
     @Transactional
     public TourResponse updateTour(int id, TourRequest request, String username) {
+        log.info("Updating tour id={} for user '{}'", id, username);
         User user = userService.findUserByUsername(username).orElseThrow();
         Tour tour = tourRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new TourNotFoundException(id));
@@ -123,6 +130,7 @@ public class TourServiceImpl implements ITourService {
     @Override
     @Transactional
     public void deleteTour(int id, String username) {
+        log.info("Deleting tour id={} for user '{}'", id, username);
         User user = userService.findUserByUsername(username).orElseThrow();
         Tour tour = tourRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new TourNotFoundException(id));
@@ -138,6 +146,7 @@ public class TourServiceImpl implements ITourService {
         if (transportType != null) transportTypeRepository.delete(transportType);
 
         tourRepository.delete(tour);
+        log.info("Tour id={} deleted", id);
     }
 
     private TourResponse toResponse(Tour tour) {
@@ -149,7 +158,7 @@ public class TourServiceImpl implements ITourService {
             try {
                 routeGeometry = objectMapper.readValue(tour.getRouteGeometry(), Object.class);
             } catch (JsonProcessingException e) {
-                // stored geometry is malformed — return null rather than failing
+                log.warn("Malformed route geometry for tour id={}, returning null", tour.getId());
             }
         }
 

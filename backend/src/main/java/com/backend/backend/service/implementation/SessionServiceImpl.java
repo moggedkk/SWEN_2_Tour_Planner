@@ -6,9 +6,11 @@ import com.backend.backend.model.entity.User;
 import com.backend.backend.security.jwt.JwtConfig;
 import com.backend.backend.service.declaration.ISessionService;
 import com.backend.backend.service.declaration.IUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class SessionServiceImpl implements ISessionService {
 
@@ -24,13 +26,17 @@ public class SessionServiceImpl implements ISessionService {
 
     @Override
     public String login(LoginRequest loginRequest) {
+        log.debug("Looking up user '{}'", loginRequest.getUsername());
+        // findUserByUsername returns an Optional<User>, orElseThrow unwraps it or throws if empty
         User user = userService.findUserByUsername(loginRequest.getUsername())
                 .orElseThrow(InvalidCredentialsException::new);
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getHash())) {
+            log.warn("Login failed: wrong password for user '{}'", loginRequest.getUsername());
             throw new InvalidCredentialsException();
         }
 
+        log.info("User '{}' logged in successfully", loginRequest.getUsername());
         return jwtConfig.createJWT(user.getUsername());
     }
 
