@@ -12,6 +12,7 @@ import com.backend.backend.repository.DifficultyRepository;
 import com.backend.backend.repository.TourRepository;
 import com.backend.backend.repository.TourTransportTypeRepository;
 import com.backend.backend.service.declaration.IOpenRouteService;
+import com.backend.backend.service.declaration.ITourLogService;
 import com.backend.backend.service.declaration.ITourService;
 import com.backend.backend.service.declaration.IUserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,18 +32,21 @@ public class TourServiceImpl implements ITourService {
     private final TourTransportTypeRepository transportTypeRepository;
     private final IUserService userService;
     private final IOpenRouteService openRouteService;
+    private final ITourLogService tourLogService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public TourServiceImpl(TourRepository tourRepository,
                            DifficultyRepository difficultyRepository,
                            TourTransportTypeRepository transportTypeRepository,
                            IUserService userService,
-                           IOpenRouteService openRouteService) {
+                           IOpenRouteService openRouteService,
+                           ITourLogService tourLogService) {
         this.tourRepository = tourRepository;
         this.difficultyRepository = difficultyRepository;
         this.transportTypeRepository = transportTypeRepository;
         this.userService = userService;
         this.openRouteService = openRouteService;
+        this.tourLogService = tourLogService;
     }
 
     @Override
@@ -134,6 +138,10 @@ public class TourServiceImpl implements ITourService {
         User user = userService.findUserByUsername(username).orElseThrow();
         Tour tour = tourRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new TourNotFoundException(id));
+
+        // wipe any logs that belong to this tour first — otherwise the foreign key
+        // constraint on tour_logs.tour_id would block the delete
+        tourLogService.deleteAllLogsForTour(tour);
 
         Difficulty difficulty = tour.getDifficulty();
         TourTransportType transportType = tour.getTransportType();

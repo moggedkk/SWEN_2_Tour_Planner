@@ -12,6 +12,7 @@ import com.backend.backend.repository.DifficultyRepository;
 import com.backend.backend.repository.TourRepository;
 import com.backend.backend.repository.TourTransportTypeRepository;
 import com.backend.backend.service.declaration.IOpenRouteService;
+import com.backend.backend.service.declaration.ITourLogService;
 import com.backend.backend.service.declaration.IUserService;
 import com.backend.backend.service.implementation.TourServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +38,7 @@ class TourServiceImplTest {
     @Mock private TourTransportTypeRepository transportTypeRepository;
     @Mock private IUserService userService;
     @Mock private IOpenRouteService openRouteService;
+    @Mock private ITourLogService tourLogService;
 
     @InjectMocks
     private TourServiceImpl tourService;

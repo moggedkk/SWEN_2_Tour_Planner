@@ -29,6 +29,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage()));
     }
 
+    @ExceptionHandler(TourLogNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleTourLogNotFound(TourLogNotFoundException ex) {
+        log.warn("Tour log not found: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage()));
+    }
+
     @ExceptionHandler(RouteNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleRouteNotFound(RouteNotFoundException ex) {
         log.error("Route could not be calculated: {}", ex.getMessage());
