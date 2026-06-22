@@ -42,7 +42,8 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
     comment: '',
     duration: 0,
     difficultyRating: 'Moderate',
-    image: ''
+    image: '',
+    totalDistance: 0   // gets set to tour.distance when the modal opens
   };
 
   private map: any = null;
@@ -73,7 +74,9 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
       comment: '',
       duration: 0,
       difficultyRating: '',
-      image: ''
+      image: '',
+      // pre-fill with the planned tour distance — user can adjust if they took a detour
+      totalDistance: tour.distance
     };
     this.isLogModalOpen = true;
   }
@@ -92,15 +95,18 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
       return;
     }
 
-    // Add the completion log using TourLogService
-    this.tourLogService.addTourLog(this.selectedTour.name, this.newLog);
-
-    this.toastService.show(
-      `Completion log added for "${this.selectedTour.name}"!`,
-      ToastType.Success
-    );
-
-    this.closeLogModal();
+    // Now hits the backend instead of just storing in memory.
+    // The service handles updating the cache so other pages (like profile) see the new log.
+    this.tourLogService.addTourLog(this.selectedTour, this.newLog).subscribe({
+      next: () => {
+        this.toastService.show(
+          `Completion log added for "${this.selectedTour!.name}"!`,
+          ToastType.Success
+        );
+        this.closeLogModal();
+      },
+      error: () => this.toastService.show('Failed to save tour log.', ToastType.Danger)
+    });
   }
 
   closeLogModal(): void {

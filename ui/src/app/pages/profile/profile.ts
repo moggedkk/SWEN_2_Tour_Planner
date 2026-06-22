@@ -137,14 +137,28 @@ export class Profile implements OnInit, OnDestroy {
         return;
       }
 
-      this.tourLogService.updateTourLog(this.editingLog.id, {
-        date: this.editingLog.date,
-        comment: this.editingLog.comment,
-        duration: this.editingLog.duration,
-        difficultyRating: this.editingLog.difficultyRating
+      // updateTourLog now hits the backend. We pass tourId + logId (both numbers from the DB)
+      // and tourName so the service can update the local cache with the right grouping key.
+      const log = this.editingLog;
+      this.tourLogService.updateTourLog(
+        log.tourId,
+        log.id,
+        {
+          date: log.date,
+          comment: log.comment,
+          duration: log.duration,
+          difficultyRating: log.difficultyRating,
+          image: log.image,
+          totalDistance: log.totalDistance
+        },
+        log.tourName
+      ).subscribe({
+        next: () => {
+          this.toastService.show('Tour log updated successfully!', ToastType.Success);
+          this.closeLogModal();
+        },
+        error: () => this.toastService.show('Failed to update tour log.', ToastType.Danger)
       });
-      this.toastService.show('Tour log updated successfully!', ToastType.Success);
-      this.closeLogModal();
     }
   }
 
@@ -155,8 +169,11 @@ export class Profile implements OnInit, OnDestroy {
   onDeleteLog(log: TourLogEntry): void {
     const confirmed = window.confirm(`Are you sure you want to delete this log from "${log.date}"?`);
     if (confirmed) {
-      this.tourLogService.deleteTourLog(log.id);
-      this.toastService.show('Tour log deleted successfully!', ToastType.Danger);
+      // deleteTourLog needs tourId + logId now because the backend URL is /api/tours/{tourId}/logs/{logId}
+      this.tourLogService.deleteTourLog(log.tourId, log.id).subscribe({
+        next: () => this.toastService.show('Tour log deleted successfully!', ToastType.Danger),
+        error: () => this.toastService.show('Failed to delete tour log.', ToastType.Danger)
+      });
     }
   }
 
