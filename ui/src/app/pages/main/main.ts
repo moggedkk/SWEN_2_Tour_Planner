@@ -28,10 +28,15 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
   filteredTours: Tour[] = [];
   private toursSubscription?: Subscription;
 
-  // Search Fields (Google Maps style)
+  // Four search fields, all AND-combined on the backend.
+  // - searchStart / searchEnd / searchTransport filter the tour's own fields
+  // - searchQuery is a full-text search across tour fields + logs + computed attributes
+  //   (popularity, child-friendliness)
+  // Empty = "don't filter on this one".
   searchStart: string = '';
   searchEnd: string = '';
   searchTransport: string = '';
+  searchQuery: string = '';
   transportTypes = Object.values(TransportType);
 
   // Completion Modal State
@@ -61,7 +66,28 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
 
 
   onSearch(): void {
-    this.filteredTours = this.allTours;
+    // if every field is empty just show the cached list — no point hitting the backend
+    const allEmpty =
+      !this.searchStart?.trim() &&
+      !this.searchEnd?.trim() &&
+      !this.searchTransport?.trim() &&
+      !this.searchQuery?.trim();
+
+    if (allEmpty) {
+      this.filteredTours = this.allTours;
+      return;
+    }
+
+    // at least one filter is set -> backend does the matching
+    this.tourService.searchTours(
+      this.searchStart,
+      this.searchEnd,
+      this.searchTransport,
+      this.searchQuery
+    ).subscribe({
+      next: results => this.filteredTours = results,
+      error: () => this.toastService.show('Search failed.', ToastType.Danger)
+    });
   }
 
   /**

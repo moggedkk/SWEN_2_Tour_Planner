@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Tour, TransportType } from '../models/Tour';
@@ -24,6 +24,9 @@ interface TourResponse {
   distance: number;
   estimatedTime: number;
   routeGeometry?: any;
+  // computed on the backend, just passed through here
+  popularity?: string;
+  childFriendliness?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -75,6 +78,22 @@ export class TourService {
 
   getToursSnapshot(): Tour[] {
     return this.toursSubject.value;
+  }
+
+  // Hits the backend's multi-field search endpoint.
+  // start/end/transport filter the tour's own fields, q is a full-text search across
+  // tour fields + every tour's logs + computed attributes. All four are AND-combined
+  // on the backend. Empty strings = "don't filter on this field".
+  // We don't update the toursSubject cache here — the page using this just shows the result.
+  searchTours(start: string, end: string, transport: string, query: string): Observable<Tour[]> {
+    const params = new HttpParams()
+      .set('start', start ?? '')
+      .set('end', end ?? '')
+      .set('transport', transport ?? '')
+      .set('q', query ?? '');
+    return this.http.get<TourResponse[]>(`${this.apiUrl}/search`, { params }).pipe(
+      map(rs => rs.map(r => this.fromResponse(r)))
+    );
   }
 
   exportTours(): void {}

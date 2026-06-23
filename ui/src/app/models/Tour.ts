@@ -29,4 +29,9 @@ export interface Tour {
   distance: number;
   estimatedTime: number;
   routeInfo?: any;
+  // computed by the backend from the tour's logs:
+  //   popularity        = how many logs exist (Low/Medium/High)
+  //   childFriendliness = easy + short + low difficulty across logs (Low/Medium/High)
+  popularity?: string;
+  childFriendliness?: string;
 }
