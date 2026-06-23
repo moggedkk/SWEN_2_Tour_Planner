@@ -37,6 +37,22 @@ public class TourController {
         return ResponseEntity.ok(tourService.getAllTours(username));
     }
 
+    // Multi-field search. All params optional — missing ones simply aren't applied.
+    // start/end/transport filter on the tour's own fields; q is a full-text search across
+    // tour fields + logs + computed attributes (popularity, child-friendliness).
+    // All four are AND-combined, so a tour must match every supplied filter.
+    @GetMapping("/search")
+    public ResponseEntity<List<TourResponse>> search(
+            @RequestParam(value = "start", defaultValue = "") String start,
+            @RequestParam(value = "end", defaultValue = "") String end,
+            @RequestParam(value = "transport", defaultValue = "") String transport,
+            @RequestParam(value = "q", defaultValue = "") String query) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.debug("User '{}' searching tours start='{}' end='{}' transport='{}' q='{}'",
+                username, start, end, transport, query);
+        return ResponseEntity.ok(tourService.searchTours(start, end, transport, query, username));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<TourResponse> getOne(@PathVariable int id) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

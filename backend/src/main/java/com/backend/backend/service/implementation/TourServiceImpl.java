@@ -6,9 +6,11 @@ import com.backend.backend.model.dto.TourRequest;
 import com.backend.backend.model.dto.TourResponse;
 import com.backend.backend.model.entity.Difficulty;
 import com.backend.backend.model.entity.Tour;
+import com.backend.backend.model.entity.TourLog;
 import com.backend.backend.model.entity.TourTransportType;
 import com.backend.backend.model.entity.User;
 import com.backend.backend.repository.DifficultyRepository;
+import com.backend.backend.repository.TourLogRepository;
 import com.backend.backend.repository.TourRepository;
 import com.backend.backend.repository.TourTransportTypeRepository;
 import com.backend.backend.service.declaration.IOpenRouteService;
@@ -33,6 +35,8 @@ public class TourServiceImpl implements ITourService {
     private final IUserService userService;
     private final IOpenRouteService openRouteService;
     private final ITourLogService tourLogService;
+    private final TourLogRepository tourLogRepository;
+    private final TourAttributeCalculator attributeCalculator;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public TourServiceImpl(TourRepository tourRepository,
@@ -40,13 +44,17 @@ public class TourServiceImpl implements ITourService {
                            TourTransportTypeRepository transportTypeRepository,
                            IUserService userService,
                            IOpenRouteService openRouteService,
-                           ITourLogService tourLogService) {
+                           ITourLogService tourLogService,
+                           TourLogRepository tourLogRepository,
+                           TourAttributeCalculator attributeCalculator) {
         this.tourRepository = tourRepository;
         this.difficultyRepository = difficultyRepository;
         this.transportTypeRepository = transportTypeRepository;
         this.userService = userService;
         this.openRouteService = openRouteService;
         this.tourLogService = tourLogService;
+        this.tourLogRepository = tourLogRepository;
+        this.attributeCalculator = attributeCalculator;
     }
 
     @Override
@@ -100,6 +108,99 @@ public class TourServiceImpl implements ITourService {
         return tourRepository.findByUser(user).stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    @Override
+    public List<TourResponse> searchTours(String start, String end, String transport, String query, String username) {
+        log.debug("User '{}' searching tours start='{}' end='{}' transport='{}' q='{}'",
+                username, start, end, transport, query);
+        User user = userService.findUserByUsername(username).orElseThrow();
+        List<Tour> allTours = tourRepository.findByUser(user);
+
+        // normalize all filters once — null/blank means "ignore this filter"
+        String startNeedle = normalize(start);
+        String endNeedle = normalize(end);
+        String transportNeedle = normalize(transport);
+        String queryNeedle = normalize(query);
+
+        // no filters at all -> behave like getAllTours
+        if (startNeedle == null && endNeedle == null && transportNeedle == null && queryNeedle == null) {
+            return allTours.stream().map(this::toResponse).toList();
+        }
+
+        return allTours.stream()
+                .filter(tour -> matchesField(tour.getStartLocation(), startNeedle))
+                .filter(tour -> matchesField(tour.getEndLocation(), endNeedle))
+                .filter(tour -> matchesTransport(tour, transportNeedle))
+                .filter(tour -> matchesFullText(tour, queryNeedle))
+                .map(this::toResponse)
+                .toList();
+    }
+
+    // Lowercase + trim, but return null for blank so we can treat "no filter" uniformly.
+    private String normalize(String value) {
+        if (value == null || value.isBlank()) return null;
+        return value.toLowerCase().trim();
+    }
+
+    // Single-field substring match. If the needle is null (no filter) it always passes.
+    private boolean matchesField(String fieldValue, String needle) {
+        if (needle == null) return true;
+        if (fieldValue == null) return false;
+        return fieldValue.toLowerCase().contains(needle);
+    }
+
+    private boolean matchesTransport(Tour tour, String needle) {
+        if (needle == null) return true;
+        if (tour.getTransportType() == null) return false;
+        return matchesField(tour.getTransportType().getTransportTypeValue(), needle);
+    }
+
+    // Full-text — checks the big concatenated string of tour fields + logs + computed attrs.
+    private boolean matchesFullText(Tour tour, String needle) {
+        if (needle == null) return true;
+        return buildSearchableText(tour).toLowerCase().contains(needle);
+    }
+
+    // Concatenates everything we want to be searchable into a single string.
+    // Pull out into its own method so the search rule is easy to read and tweak.
+    private String buildSearchableText(Tour tour) {
+        List<TourLog> logs = tourLogRepository.findByTour(tour);
+        StringBuilder sb = new StringBuilder();
+
+        // ---- tour fields ----
+        appendIfNotBlank(sb, tour.getTourName());
+        appendIfNotBlank(sb, tour.getDescription());
+        appendIfNotBlank(sb, tour.getStartLocation());
+        appendIfNotBlank(sb, tour.getEndLocation());
+        if (tour.getDifficulty() != null) {
+            appendIfNotBlank(sb, tour.getDifficulty().getDifficultyValue());
+        }
+        if (tour.getTransportType() != null) {
+            appendIfNotBlank(sb, tour.getTransportType().getTransportTypeValue());
+        }
+
+        // ---- every log belonging to this tour ----
+        for (TourLog tourLog : logs) {
+            appendIfNotBlank(sb, tourLog.getComment());
+            appendIfNotBlank(sb, tourLog.getDifficulty());
+            if (tourLog.getDateTime() != null) sb.append(' ').append(tourLog.getDateTime());
+            sb.append(' ').append(tourLog.getTotalDistance());
+            sb.append(' ').append(tourLog.getTotalTime());
+            sb.append(' ').append(tourLog.getRating());
+        }
+
+        // ---- computed attributes (spec wants these to count too) ----
+        sb.append(' ').append(attributeCalculator.computePopularity(logs.size()));
+        sb.append(' ').append(attributeCalculator.computeChildFriendliness(logs));
+
+        return sb.toString();
+    }
+
+    private void appendIfNotBlank(StringBuilder sb, String value) {
+        if (value != null && !value.isBlank()) {
+            sb.append(' ').append(value);
+        }
     }
 
     @Override
@@ -170,6 +271,13 @@ public class TourServiceImpl implements ITourService {
             }
         }
 
+        // Pull all logs for this tour so we can compute the "automatic" attributes the spec wants.
+        // Note: this is one extra query per tour. Fine for now — if the tour list ever gets really big
+        // we'd want to fetch all logs once and group them in memory, but that's a later optimization.
+        List<TourLog> logs = tourLogRepository.findByTour(tour);
+        String popularity = attributeCalculator.computePopularity(logs.size());
+        String childFriendliness = attributeCalculator.computeChildFriendliness(logs);
+
         return new TourResponse(
                 tour.getId(),
                 tour.getTourName(),
@@ -180,7 +288,9 @@ public class TourServiceImpl implements ITourService {
                 transportTypeValue,
                 tour.getDistance(),
                 tour.getEstimatedTime(),
-                routeGeometry
+                routeGeometry,
+                popularity,
+                childFriendliness
         );
     }
 }

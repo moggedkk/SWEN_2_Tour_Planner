@@ -9,11 +9,13 @@ import com.backend.backend.model.entity.Tour;
 import com.backend.backend.model.entity.TourTransportType;
 import com.backend.backend.model.entity.User;
 import com.backend.backend.repository.DifficultyRepository;
+import com.backend.backend.repository.TourLogRepository;
 import com.backend.backend.repository.TourRepository;
 import com.backend.backend.repository.TourTransportTypeRepository;
 import com.backend.backend.service.declaration.IOpenRouteService;
 import com.backend.backend.service.declaration.ITourLogService;
 import com.backend.backend.service.declaration.IUserService;
+import com.backend.backend.service.implementation.TourAttributeCalculator;
 import com.backend.backend.service.implementation.TourServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +41,8 @@ class TourServiceImplTest {
     @Mock private IUserService userService;
     @Mock private IOpenRouteService openRouteService;
     @Mock private ITourLogService tourLogService;
+    @Mock private TourLogRepository tourLogRepository;
+    @Mock private TourAttributeCalculator attributeCalculator;
 
     @InjectMocks
     private TourServiceImpl tourService;
@@ -185,5 +189,185 @@ class TourServiceImplTest {
 
         assertThatThrownBy(() -> tourService.deleteTour(99, "testuser"))
                 .isInstanceOf(TourNotFoundException.class);
+    }
+
+    // ---- multi-field search ----
+
+    @Test
+    void searchTours_allFiltersEmpty_returnsAllTours() {
+        when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
+        when(tourRepository.findByUser(user)).thenReturn(List.of(tour));
+        when(tourLogRepository.findByTour(tour)).thenReturn(List.of());
+        when(attributeCalculator.computePopularity(0)).thenReturn("Low");
+        when(attributeCalculator.computeChildFriendliness(List.of())).thenReturn("Low");
+
+        // every filter empty -> same as getAllTours
+        List<TourResponse> result = tourService.searchTours("", "", "", "", "testuser");
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void searchTours_fullTextMatchesTourName_returnsTour() {
+        when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
+        when(tourRepository.findByUser(user)).thenReturn(List.of(tour));
+        when(tourLogRepository.findByTour(tour)).thenReturn(List.of());
+        when(attributeCalculator.computePopularity(0)).thenReturn("Low");
+        when(attributeCalculator.computeChildFriendliness(List.of())).thenReturn("Low");
+
+        // tour.name = "Test Tour" — searching for "test" should match
+        List<TourResponse> result = tourService.searchTours("", "", "", "test", "testuser");
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getName()).isEqualTo("Test Tour");
+    }
+
+    @Test
+    void searchTours_isCaseInsensitive() {
+        when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
+        when(tourRepository.findByUser(user)).thenReturn(List.of(tour));
+        when(tourLogRepository.findByTour(tour)).thenReturn(List.of());
+        when(attributeCalculator.computePopularity(0)).thenReturn("Low");
+        when(attributeCalculator.computeChildFriendliness(List.of())).thenReturn("Low");
+
+        // matches startLocation "Vienna" via the full-text query
+        List<TourResponse> result = tourService.searchTours("", "", "", "VIENNA", "testuser");
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void searchTours_fullTextMatchesLogComment_returnsTour() {
+        com.backend.backend.model.entity.TourLog logEntry = new com.backend.backend.model.entity.TourLog();
+        logEntry.setComment("Beautiful weather");
+        logEntry.setTour(tour);
+
+        when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
+        when(tourRepository.findByUser(user)).thenReturn(List.of(tour));
+        when(tourLogRepository.findByTour(tour)).thenReturn(List.of(logEntry));
+        when(attributeCalculator.computePopularity(1)).thenReturn("Medium");
+        when(attributeCalculator.computeChildFriendliness(List.of(logEntry))).thenReturn("Low");
+
+        // search term is in a LOG's comment, not in any tour field
+        List<TourResponse> result = tourService.searchTours("", "", "", "weather", "testuser");
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void searchTours_fullTextMatchesComputedPopularity_returnsTour() {
+        when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
+        when(tourRepository.findByUser(user)).thenReturn(List.of(tour));
+        when(tourLogRepository.findByTour(tour)).thenReturn(List.of());
+        when(attributeCalculator.computePopularity(0)).thenReturn("High");
+        when(attributeCalculator.computeChildFriendliness(List.of())).thenReturn("Low");
+
+        // spec says computed values must also be searchable
+        List<TourResponse> result = tourService.searchTours("", "", "", "high", "testuser");
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void searchTours_noMatch_returnsEmptyList() {
+        when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
+        when(tourRepository.findByUser(user)).thenReturn(List.of(tour));
+        when(tourLogRepository.findByTour(tour)).thenReturn(List.of());
+        when(attributeCalculator.computePopularity(0)).thenReturn("Low");
+        when(attributeCalculator.computeChildFriendliness(List.of())).thenReturn("Low");
+
+        List<TourResponse> result = tourService.searchTours("", "", "", "nonexistent-gibberish", "testuser");
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void searchTours_startFilter_matchesTour() {
+        when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
+        when(tourRepository.findByUser(user)).thenReturn(List.of(tour));
+        when(tourLogRepository.findByTour(tour)).thenReturn(List.of());
+        when(attributeCalculator.computePopularity(0)).thenReturn("Low");
+        when(attributeCalculator.computeChildFriendliness(List.of())).thenReturn("Low");
+
+        // tour.startLocation = "Vienna" -> "vien" should match
+        List<TourResponse> result = tourService.searchTours("vien", "", "", "", "testuser");
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void searchTours_startFilter_doesNotMatch_returnsEmpty() {
+        when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
+        when(tourRepository.findByUser(user)).thenReturn(List.of(tour));
+
+        // start filter doesn't match -> tour gets filtered out before we even need
+        // the log lookup or computed attrs, so those mocks aren't required here
+        List<TourResponse> result = tourService.searchTours("Berlin", "", "", "", "testuser");
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void searchTours_endFilter_matchesTour() {
+        when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
+        when(tourRepository.findByUser(user)).thenReturn(List.of(tour));
+        when(tourLogRepository.findByTour(tour)).thenReturn(List.of());
+        when(attributeCalculator.computePopularity(0)).thenReturn("Low");
+        when(attributeCalculator.computeChildFriendliness(List.of())).thenReturn("Low");
+
+        // tour.endLocation = "Graz"
+        List<TourResponse> result = tourService.searchTours("", "graz", "", "", "testuser");
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void searchTours_transportFilter_matchesTour() {
+        when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
+        when(tourRepository.findByUser(user)).thenReturn(List.of(tour));
+        when(tourLogRepository.findByTour(tour)).thenReturn(List.of());
+        when(attributeCalculator.computePopularity(0)).thenReturn("Low");
+        when(attributeCalculator.computeChildFriendliness(List.of())).thenReturn("Low");
+
+        // tour.transportType = "foot-walking"
+        List<TourResponse> result = tourService.searchTours("", "", "foot-walking", "", "testuser");
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void searchTours_transportFilter_doesNotMatch_returnsEmpty() {
+        when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
+        when(tourRepository.findByUser(user)).thenReturn(List.of(tour));
+
+        List<TourResponse> result = tourService.searchTours("", "", "driving-car", "", "testuser");
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void searchTours_allFiltersCombined_AND_match() {
+        when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
+        when(tourRepository.findByUser(user)).thenReturn(List.of(tour));
+        when(tourLogRepository.findByTour(tour)).thenReturn(List.of());
+        when(attributeCalculator.computePopularity(0)).thenReturn("Low");
+        when(attributeCalculator.computeChildFriendliness(List.of())).thenReturn("Low");
+
+        // every filter matches the one tour we have
+        List<TourResponse> result = tourService.searchTours("vienna", "graz", "foot-walking", "test", "testuser");
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void searchTours_allFiltersCombined_oneFails_AND_excludes() {
+        when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
+        when(tourRepository.findByUser(user)).thenReturn(List.of(tour));
+
+        // start/end/transport all match, but the full-text query doesn't ->
+        // AND semantics means the tour is filtered out
+        List<TourResponse> result = tourService.searchTours("vienna", "graz", "foot-walking", "nonexistent", "testuser");
+
+        assertThat(result).isEmpty();
     }
 }

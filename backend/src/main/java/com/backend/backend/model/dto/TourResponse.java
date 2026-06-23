@@ -16,4 +16,7 @@ public class TourResponse {
     private double distance;
     private int estimatedTime;
     private Object routeGeometry;
+    // automatically computed by TourAttributeCalculator using the tour's logs
+    private String popularity;
+    private String childFriendliness;
 }
