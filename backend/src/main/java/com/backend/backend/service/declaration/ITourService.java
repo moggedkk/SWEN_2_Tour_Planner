@@ -13,6 +13,13 @@ public interface ITourService {
     // batch rolls back and an exception bubbles up. user has to fix the input
     // and try again.
     List<TourResponse> importTours(List<TourRequest> requests, String username);
+
+    // dump every tour the user owns as a list of TourRequest. same shape the
+    // import endpoint accepts -> export and re-import round-trips cleanly.
+    // computed stuff (distance, estimatedTime, route geometry, logs, popularity,
+    // child-friendliness, id) is deliberately left out — those get rebuilt on
+    // import anyway.
+    List<TourRequest> exportTours(String username);
     TourResponse getTour(int id, String username);
     List<TourResponse> getAllTours(String username);
     TourResponse updateTour(int id, TourRequest request, String username);

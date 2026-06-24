@@ -40,6 +40,15 @@ public class TourController {
         return ResponseEntity.status(HttpStatus.CREATED).body(tourService.importTours(requests, username));
     }
 
+    // export. returns the user's tours in the SAME shape that /import accepts,
+    // so a user can export, edit the file, re-import without translation.
+    @GetMapping("/export")
+    public ResponseEntity<List<TourRequest>> exportTours() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.info("User '{}' exporting tours", username);
+        return ResponseEntity.ok(tourService.exportTours(username));
+    }
+
     @GetMapping
     public ResponseEntity<List<TourResponse>> getAll() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

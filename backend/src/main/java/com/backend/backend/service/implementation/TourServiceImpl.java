@@ -124,6 +124,29 @@ public class TourServiceImpl implements ITourService {
     }
 
     @Override
+    public List<TourRequest> exportTours(String username) {
+        log.info("User '{}' exporting tours", username);
+        User user = userService.findUserByUsername(username).orElseThrow();
+        return tourRepository.findByUser(user).stream()
+                .map(this::toRequest)
+                .toList();
+    }
+
+    // strip a Tour entity down to the fields the import endpoint accepts. we
+    // deliberately drop id, distance, estimatedTime, routeGeometry, logs, and
+    // computed attributes — those get rebuilt when the file is re-imported.
+    private TourRequest toRequest(Tour tour) {
+        return new TourRequest(
+                tour.getTourName(),
+                tour.getStartLocation(),
+                tour.getEndLocation(),
+                tour.getDescription(),
+                tour.getDifficulty() != null ? tour.getDifficulty().getDifficultyValue() : null,
+                tour.getTransportType() != null ? tour.getTransportType().getTransportTypeValue() : null
+        );
+    }
+
+    @Override
     public TourResponse getTour(int id, String username) {
         User user = userService.findUserByUsername(username).orElseThrow();
         Tour tour = tourRepository.findByIdAndUser(id, user)

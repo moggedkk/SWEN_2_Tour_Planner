@@ -359,6 +359,52 @@ class TourServiceImplTest {
         assertThat(result).hasSize(1);
     }
 
+    // ---- export ----
+
+    @Test
+    void exportTours_returnsTourRequestsMatchingImportShape() {
+        when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
+        when(tourRepository.findByUser(user)).thenReturn(List.of(tour));
+
+        List<TourRequest> result = tourService.exportTours("testuser");
+
+        assertThat(result).hasSize(1);
+        TourRequest exported = result.get(0);
+        assertThat(exported.getName()).isEqualTo("Test Tour");
+        assertThat(exported.getStart()).isEqualTo("Vienna");
+        assertThat(exported.getEnd()).isEqualTo("Graz");
+        assertThat(exported.getDescription()).isEqualTo("A nice tour");
+        assertThat(exported.getDifficulty()).isEqualTo("easy");
+        assertThat(exported.getTransportType()).isEqualTo("foot-walking");
+    }
+
+    @Test
+    void exportTours_noTours_returnsEmptyList() {
+        when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
+        when(tourRepository.findByUser(user)).thenReturn(List.of());
+
+        List<TourRequest> result = tourService.exportTours("testuser");
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void exportTours_nullDifficultyAndTransport_handledGracefully() {
+        // tour without difficulty/transport (edge case — shouldn't happen in
+        // practice, but the toRequest mapper has null guards so cover it)
+        tour.setDifficulty(null);
+        tour.setTransportType(null);
+
+        when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
+        when(tourRepository.findByUser(user)).thenReturn(List.of(tour));
+
+        List<TourRequest> result = tourService.exportTours("testuser");
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getDifficulty()).isNull();
+        assertThat(result.get(0).getTransportType()).isNull();
+    }
+
     // ---- bulk import ----
 
     @Test
