@@ -35,7 +35,8 @@
       </div>
 
       <div class="list-group list-group-flush shadow-sm rounded-3">
-        <div *ngFor="let tour of createdTours" class="list-group-item list-group-item-action border-0 py-3 mb-2 bg-white rounded-3 shadow-sm">
+        @for (tour of createdTours; track tour.id) {
+        <div class="list-group-item list-group-item-action border-0 py-3 mb-2 bg-white rounded-3 shadow-sm">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <!-- Left Side: Name -->
             <h6 class="mb-0 fw-bold text-primary text-truncate me-3">{{ tour.name }}</h6>
@@ -75,9 +76,12 @@
             <span><i class="bi bi-clock me-1"></i> {{ tour.estimatedTime }} min</span>
           </div>
         </div>
-        <div *ngIf="createdTours.length === 0" class="list-group-item text-center py-5 text-muted bg-white rounded-3">
-          No tours created yet.
-        </div>
+        }
+        @if (createdTours.length === 0) {
+          <div class="list-group-item text-center py-5 text-muted bg-white rounded-3">
+            No tours created yet.
+          </div>
+        }
       </div>
     </div>
 
@@ -90,7 +94,8 @@
 
       <div class="list-group list-group-flush shadow-sm rounded-3">
         <!-- Group tour logs by tour -->
-        <div *ngFor="let tourName of getGroupedTourNames()" class="mb-3">
+        @for (tourName of getGroupedTourNames(); track tourName) {
+        <div class="mb-3">
           <!-- Tour Group Header -->
           <div class="list-group-item border-0 py-2 bg-light rounded-3 mb-2">
             <h6 class="mb-0 fw-bold text-primary">{{ tourName }}</h6>
@@ -98,8 +103,8 @@
           </div>
 
           <!-- Individual Logs for this Tour -->
-          <div *ngFor="let log of groupedTourLogs.get(tourName)"
-               class="list-group-item border-0 py-3 mb-2 bg-white rounded-3 shadow-sm ms-3">
+          @for (log of groupedTourLogs.get(tourName); track log.id) {
+          <div class="list-group-item border-0 py-3 mb-2 bg-white rounded-3 shadow-sm ms-3">
             <div class="d-flex align-items-start">
               <div class="rounded-circle bg-success bg-opacity-10 text-success p-2 me-3">
                 <i class="bi bi-check-lg" style="font-size: 1.2rem;"></i>
@@ -110,9 +115,11 @@
                     <div class="small text-muted">
                       <strong>{{ log.date }}</strong> • {{ log.duration }} min • {{ log.difficultyRating }}
                     </div>
-                    <div *ngIf="log.comment" class="small text-muted fst-italic mt-1">
-                      "{{ log.comment }}"
-                    </div>
+                    @if (log.comment) {
+                      <div class="small text-muted fst-italic mt-1">
+                        "{{ log.comment }}"
+                      </div>
+                    }
                   </div>
                   <div class="d-flex gap-2">
                     <button class="btn btn-link text-primary p-0 border-0 opacity-50 hover-opacity-100"
@@ -130,26 +137,32 @@
               </div>
             </div>
           </div>
+          }
         </div>
+        }
 
-        <div *ngIf="getGroupedTourNames().length === 0" class="list-group-item text-center py-5 text-muted bg-white rounded-3">
-          No activity recorded yet.
-        </div>
+        @if (getGroupedTourNames().length === 0) {
+          <div class="list-group-item text-center py-5 text-muted bg-white rounded-3">
+            No activity recorded yet.
+          </div>
+        }
       </div>
     </div>
   </div>
 </div>
 
 <!-- Edit Tour Modal (Foreground Card) -->
-<div *ngIf="isEditModalOpen" class="modal-backdrop fade show"></div>
-<div *ngIf="isEditModalOpen" class="modal d-block" tabindex="-1">
+@if (isEditModalOpen) {
+<div class="modal-backdrop fade show"></div>
+<div class="modal d-block" tabindex="-1">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg rounded-4">
       <div class="modal-header bg-primary text-white rounded-top-4 py-3">
         <h5 class="modal-title fw-bold">Edit Tour Details</h5>
         <button type="button" class="btn-close btn-close-white" (click)="onCancelEdit()"></button>
       </div>
-      <div class="modal-body p-4" *ngIf="editingTour">
+      @if (editingTour) {
+      <div class="modal-body p-4">
         <form #editForm="ngForm">
           <div class="row g-3">
             <!-- Name -->
@@ -181,7 +194,9 @@
             <div class="col-md-6">
               <label class="form-label fw-bold small text-muted text-uppercase">Transport Type <span class="text-danger">*</span></label>
               <select name="transportType" [(ngModel)]="editingTour.transportType" class="form-select" required>
-                <option *ngFor="let type of transportTypes" [value]="type">{{ type }}</option>
+                @for (type of transportTypes; track type) {
+                  <option [value]="type">{{ type }}</option>
+                }
               </select>
             </div>
 
@@ -203,6 +218,7 @@
           </div>
         </form>
       </div>
+      }
       <div class="modal-footer border-0 p-4 pt-0">
         <button type="button" class="btn btn-light rounded-pill px-4" (click)="onCancelEdit()">Cancel</button>
         <button type="button" class="btn btn-primary rounded-pill px-4" (click)="onSaveEdit()">Save Changes</button>
@@ -210,17 +226,20 @@
     </div>
   </div>
 </div>
+}
 
 <!-- Edit TourLog Modal -->
-<div *ngIf="isEditLogModalOpen" class="modal-backdrop fade show"></div>
-<div *ngIf="isEditLogModalOpen" class="modal d-block" tabindex="-1">
+@if (isEditLogModalOpen) {
+<div class="modal-backdrop fade show"></div>
+<div class="modal d-block" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg rounded-4">
       <div class="modal-header bg-success text-white rounded-top-4 py-3">
         <h5 class="modal-title fw-bold">Edit Tour Log</h5>
         <button type="button" class="btn-close btn-close-white" (click)="onCancelLogEdit()"></button>
       </div>
-      <div class="modal-body p-4" *ngIf="editingLog">
+      @if (editingLog) {
+      <div class="modal-body p-4">
         <form #editLogForm="ngForm">
           <div class="row g-3">
             <!-- Tour Name (Read-only) -->
@@ -266,6 +285,7 @@
           </div>
         </form>
       </div>
+      }
       <div class="modal-footer border-0 p-4 pt-0">
         <button type="button" class="btn btn-light rounded-pill px-4" (click)="onCancelLogEdit()">Cancel</button>
         <button type="button" class="btn btn-success rounded-pill px-4" (click)="onSaveLogEdit()">Save Changes</button>
@@ -273,3 +293,4 @@
     </div>
   </div>
 </div>
+}

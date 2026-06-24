@@ -6,50 +6,57 @@
   <div class="search-overlay position-absolute top-50 start-50 translate-middle p-3 bg-white shadow rounded-4" style="z-index: 1000; width: 350px;">
     <h5 class="fw-bold mb-3">Find your next tour</h5>
 
-    <div class="mb-2">
-      <label class="small fw-bold text-muted text-uppercase">From</label>
-      <input type="text"
-             class="form-control border-0 bg-light rounded-pill px-3"
-             placeholder="Start location"
-             [(ngModel)]="searchStart"
-             (ngModelChange)="onSearch()">
-    </div>
+    <!-- no live filtering on these inputs — the "Search Tours" button is what
+         actually triggers onSearch(). pressing Enter inside any input also works
+         because the form submit fires the button. -->
+    <form (ngSubmit)="onSearch()">
+      <div class="mb-2">
+        <label class="small fw-bold text-muted text-uppercase">From</label>
+        <input type="text"
+               name="searchStart"
+               class="form-control border-0 bg-light rounded-pill px-3"
+               placeholder="Start location"
+               [(ngModel)]="searchStart">
+      </div>
 
-    <div class="mb-2">
-      <label class="small fw-bold text-muted text-uppercase">To</label>
-      <input type="text"
-             class="form-control border-0 bg-light rounded-pill px-3"
-             placeholder="Destination"
-             [(ngModel)]="searchEnd"
-             (ngModelChange)="onSearch()">
-    </div>
+      <div class="mb-2">
+        <label class="small fw-bold text-muted text-uppercase">To</label>
+        <input type="text"
+               name="searchEnd"
+               class="form-control border-0 bg-light rounded-pill px-3"
+               placeholder="Destination"
+               [(ngModel)]="searchEnd">
+      </div>
 
-    <div class="mb-2">
-      <label class="small fw-bold text-muted text-uppercase">Transport</label>
-      <select class="form-select border-0 bg-light rounded-pill px-3"
-              [(ngModel)]="searchTransport"
-              (ngModelChange)="onSearch()">
-        <option value="">All Means</option>
-        <option *ngFor="let type of transportTypes" [value]="type">{{ type }}</option>
-      </select>
-    </div>
+      <div class="mb-2">
+        <label class="small fw-bold text-muted text-uppercase">Transport</label>
+        <select class="form-select border-0 bg-light rounded-pill px-3"
+                name="searchTransport"
+                [(ngModel)]="searchTransport">
+          <option value="">All Means</option>
+          @for (type of transportTypes; track type) {
+            <option [value]="type">{{ type }}</option>
+          }
+        </select>
+      </div>
 
-    <!-- full-text search — looks inside log comments, ratings, popularity etc.
-         so the user can find tours by stuff that isn't a from/to/transport field -->
-    <div class="mb-3">
-      <label class="small fw-bold text-muted text-uppercase">Search</label>
-      <input type="text"
-             class="form-control border-0 bg-light rounded-pill px-3"
-             placeholder="Keywords, log comments, popularity..."
-             [(ngModel)]="searchQuery"
-             (ngModelChange)="onSearch()">
-    </div>
+      <!-- full-text search — looks inside log comments, ratings, popularity etc.
+           so the user can find tours by stuff that isn't a from/to/transport field -->
+      <div class="mb-3">
+        <label class="small fw-bold text-muted text-uppercase">Search</label>
+        <input type="text"
+               name="searchQuery"
+               class="form-control border-0 bg-light rounded-pill px-3"
+               placeholder="Keywords, log comments, popularity..."
+               [(ngModel)]="searchQuery">
+      </div>
 
-    <div class="d-grid gap-2">
-      <button class="btn btn-primary rounded-pill fw-bold py-2 shadow-sm" (click)="onSearch()">
-        Search Tours
-      </button>
-    </div>
+      <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary rounded-pill fw-bold py-2 shadow-sm">
+          Search Tours
+        </button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -69,7 +76,8 @@
   </div>
 
   <div class="row g-4">
-    <div *ngFor="let tour of filteredTours" class="col-md-6 col-lg-4">
+    @for (tour of filteredTours; track tour.id) {
+    <div class="col-md-6 col-lg-4">
       <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden tour-hover-card"
            style="cursor: pointer;"
            (click)="router.navigate(['/tour-details', tour.id])">
@@ -125,28 +133,33 @@
         </div>
       </div>
     </div>
+    }
 
-    <div *ngIf="filteredTours.length === 0" class="col-12">
-      <div class="text-center py-5 bg-light rounded-4 border-2 border-dashed">
-        <h5 class="text-muted">No tours match your search criteria.</h5>
-        <button class="btn btn-link text-primary p-0" (click)="searchStart = ''; searchEnd = ''; searchTransport = ''; searchQuery = ''; onSearch()">
-          Clear filters
-        </button>
+    @if (filteredTours.length === 0) {
+      <div class="col-12">
+        <div class="text-center py-5 bg-light rounded-4 border-2 border-dashed">
+          <h5 class="text-muted">No tours match your search criteria.</h5>
+          <button class="btn btn-link text-primary p-0" (click)="searchStart = ''; searchEnd = ''; searchTransport = ''; searchQuery = ''; onSearch()">
+            Clear filters
+          </button>
+        </div>
       </div>
-    </div>
+    }
   </div>
 </div>
 
 <!-- Tour Completion Log Modal -->
-<div *ngIf="isLogModalOpen" class="modal-backdrop fade show"></div>
-<div *ngIf="isLogModalOpen" class="modal d-block" tabindex="-1">
+@if (isLogModalOpen) {
+<div class="modal-backdrop fade show"></div>
+<div class="modal d-block" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg rounded-4">
       <div class="modal-header bg-success text-white rounded-top-4 py-3">
         <h5 class="modal-title fw-bold">Tour Completion Log</h5>
         <button type="button" class="btn-close btn-close-white" (click)="closeLogModal()"></button>
       </div>
-      <div class="modal-body p-4" *ngIf="selectedTour">
+      @if (selectedTour) {
+      <div class="modal-body p-4">
         <p class="small text-muted mb-4">Tell us how was your experience on <strong>{{ selectedTour.name }}</strong>!</p>
 
         <form #logForm="ngForm">
@@ -188,6 +201,7 @@
           </div>
         </form>
       </div>
+      }
       <div class="modal-footer border-0 p-4 pt-0 d-flex gap-2">
         <input type="file" class="form-control" accept="image/png, image/jpeg" (change)="onFileSelected($event)">
         <button type="button" class="btn btn-light rounded-pill px-4" (click)="closeLogModal()">Cancel</button>
@@ -196,3 +210,4 @@
     </div>
   </div>
 </div>
+}

@@ -80,9 +80,11 @@
         name="transportType"
         [(ngModel)]="tourForm.transportType"
         required>
-        <option *ngFor="let type of transportTypes" [value]="type">
-          {{ type }}
-        </option>
+        @for (type of transportTypes; track type) {
+          <option [value]="type">
+            {{ type }}
+          </option>
+        }
       </select>
     </div>
 
