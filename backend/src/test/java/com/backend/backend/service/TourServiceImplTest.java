@@ -359,6 +359,58 @@ class TourServiceImplTest {
         assertThat(result).hasSize(1);
     }
 
+    // ---- bulk import ----
+
+    @Test
+    void importTours_allSucceed_returnsAllImported() {
+        when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
+        when(openRouteService.getRoute("Vienna", "Graz", "foot-walking")).thenReturn(routeResult);
+        when(tourRepository.save(any())).thenReturn(tour);
+        when(difficultyRepository.save(any())).thenReturn(tour.getDifficulty());
+        when(transportTypeRepository.save(any())).thenReturn(tour.getTransportType());
+
+        List<TourResponse> result = tourService.importTours(List.of(request, request, request), "testuser");
+
+        assertThat(result).hasSize(3);
+        // each createTour calls tourRepository.save twice (once to get the id,
+        // once after wiring up the difficulty + transport type) -> 3 tours = 6 saves
+        verify(tourRepository, times(6)).save(any());
+    }
+
+    @Test
+    void importTours_emptyList_returnsEmpty() {
+        // no stubs needed — empty list means the loop body never runs, so we
+        // never reach createTour and therefore never call any dependency
+        List<TourResponse> result = tourService.importTours(List.of(), "testuser");
+
+        assertThat(result).isEmpty();
+        verify(openRouteService, never()).getRoute(any(), any(), any());
+        verify(tourRepository, never()).save(any());
+    }
+
+    @Test
+    void importTours_oneFails_throwsAndAbortsImport() {
+        TourRequest goodRequest = new TourRequest("Good", "Vienna", "Graz", "Real route", "easy", "foot-walking");
+        TourRequest badRequest = new TourRequest("Bad", "asdfqwerty", "xyz", "Bad", "easy", "foot-walking");
+
+        when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
+        // first route lookup succeeds, second one blows up — simulates a malformed
+        // address that OpenRouteService can't resolve. importTours should bail out.
+        when(openRouteService.getRoute("Vienna", "Graz", "foot-walking")).thenReturn(routeResult);
+        when(openRouteService.getRoute("asdfqwerty", "xyz", "foot-walking"))
+                .thenThrow(new RuntimeException("Route not found"));
+        when(tourRepository.save(any())).thenReturn(tour);
+        when(difficultyRepository.save(any())).thenReturn(tour.getDifficulty());
+        when(transportTypeRepository.save(any())).thenReturn(tour.getTransportType());
+
+        // expect the error message to point at the failing tour
+        assertThatThrownBy(() -> tourService.importTours(List.of(goodRequest, badRequest), "testuser"))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("tour #2")
+                .hasMessageContaining("Bad")
+                .hasMessageContaining("Route not found");
+    }
+
     @Test
     void searchTours_allFiltersCombined_oneFails_AND_excludes() {
         when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));

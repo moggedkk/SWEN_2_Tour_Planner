@@ -23,6 +23,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -92,6 +93,34 @@ public class TourServiceImpl implements ITourService {
         TourResponse response = toResponse(tourRepository.save(saved));
         log.info("Tour '{}' created with id={}", response.getName(), response.getId());
         return response;
+    }
+
+    @Override
+    @Transactional
+    public List<TourResponse> importTours(List<TourRequest> requests, String username) {
+        log.info("User '{}' bulk-importing {} tour(s)", username, requests.size());
+
+        List<TourResponse> imported = new ArrayList<>();
+        for (int i = 0; i < requests.size(); i++) {
+            TourRequest req = requests.get(i);
+            try {
+                // we're already inside this method's @Transactional, so the
+                // inner createTour call joins the same transaction (Spring's
+                // default REQUIRED propagation). that's exactly what we want:
+                // any failure here throws, the whole batch rolls back.
+                imported.add(createTour(req, username));
+            } catch (RuntimeException e) {
+                // wrap so the user knows WHICH tour broke the import. then
+                // rethrow so @Transactional rolls everything back.
+                String name = req != null ? req.getName() : null;
+                log.warn("Import aborted at tour idx={} name='{}': {}", i, name, e.getMessage());
+                throw new RuntimeException(
+                        "Import failed at tour #" + (i + 1) + " ('" + name + "'): " + e.getMessage(), e);
+            }
+        }
+
+        log.info("Imported {} tour(s) for user '{}'", imported.size(), username);
+        return imported;
     }
 
     @Override

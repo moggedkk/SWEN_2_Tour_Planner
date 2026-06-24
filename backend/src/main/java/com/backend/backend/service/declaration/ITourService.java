@@ -7,6 +7,12 @@ import java.util.List;
 
 public interface ITourService {
     TourResponse createTour(TourRequest request, String username);
+
+    // bulk-create tours from an import. all-or-nothing: if any tour fails (bad
+    // address, OpenRouteService rejects it, validation, whatever) the whole
+    // batch rolls back and an exception bubbles up. user has to fix the input
+    // and try again.
+    List<TourResponse> importTours(List<TourRequest> requests, String username);
     TourResponse getTour(int id, String username);
     List<TourResponse> getAllTours(String username);
     TourResponse updateTour(int id, TourRequest request, String username);

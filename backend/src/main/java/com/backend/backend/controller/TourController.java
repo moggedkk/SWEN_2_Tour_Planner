@@ -30,6 +30,16 @@ public class TourController {
         return ResponseEntity.status(HttpStatus.CREATED).body(tourService.createTour(request, username));
     }
 
+    // bulk import. all-or-nothing: a single bad tour rolls back the whole batch
+    // and the user gets a 500 with the failing tour's index + reason. on success
+    // we return 201 with the full list of created tours.
+    @PostMapping("/import")
+    public ResponseEntity<List<TourResponse>> importTours(@RequestBody List<TourRequest> requests) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.info("User '{}' importing {} tour(s)", username, requests.size());
+        return ResponseEntity.status(HttpStatus.CREATED).body(tourService.importTours(requests, username));
+    }
+
     @GetMapping
     public ResponseEntity<List<TourResponse>> getAll() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
