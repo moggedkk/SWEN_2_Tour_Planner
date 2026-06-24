@@ -113,7 +113,29 @@ export class TourService {
     );
   }
 
-  exportTours(): void {}
+  // Downloads the user's tours as a .json file. The backend hands back the
+  // same TourRequest[] shape that /import accepts, so the downloaded file can
+  // be re-uploaded on the Import page without any editing.
+  // Trick: we receive the JSON, wrap it in a Blob, build a hidden <a> with a
+  // download attribute, click it programmatically, then revoke the object URL.
+  // This is the standard browser pattern for "save as" — no extra libs needed.
+  exportTours(): void {
+    this.http.get<unknown[]>(`${this.apiUrl}/export`).subscribe(tours => {
+      const blob = new Blob([JSON.stringify(tours, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+
+      const today = new Date().toISOString().split('T')[0];
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `tours-${today}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      // free the blob memory once the click is queued
+      URL.revokeObjectURL(url);
+    });
+  }
 
   private fromResponse(r: TourResponse): Tour {
     return { ...r, transportType: r.transportType as TransportType, logs: [], routeInfo: r.routeGeometry };
