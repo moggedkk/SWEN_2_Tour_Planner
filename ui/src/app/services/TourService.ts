@@ -4,7 +4,9 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Tour, TransportType } from '../models/Tour';
 
-interface TourRequest {
+// exported so the import page can type the parsed JSON array against the
+// same shape the backend expects
+export interface TourRequest {
   name: string;
   start: string;
   end: string;
@@ -93,6 +95,21 @@ export class TourService {
       .set('q', query ?? '');
     return this.http.get<TourResponse[]>(`${this.apiUrl}/search`, { params }).pipe(
       map(rs => rs.map(r => this.fromResponse(r)))
+    );
+  }
+
+  // Bulk-import via the backend. All-or-nothing on the backend side, so if this
+  // observable errors out NONE of the tours were created. On success we push the
+  // new tours into the cache so the home page / profile pick them up without a
+  // full reload.
+  importTours(requests: TourRequest[]): Observable<Tour[]> {
+    return this.http.post<TourResponse[]>(`${this.apiUrl}/import`, requests).pipe(
+      map(rs => rs.map(r => this.fromResponse(r))),
+      tap(created => {
+        if (created.length > 0) {
+          this.toursSubject.next([...this.toursSubject.value, ...created]);
+        }
+      })
     );
   }
 

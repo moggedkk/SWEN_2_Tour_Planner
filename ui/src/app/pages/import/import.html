@@ -1,19 +1,104 @@
 <app-navbar></app-navbar>
 <app-tour-actions></app-tour-actions>
 
+<div class="container mt-4" style="max-width: 900px;">
 
-<div class="container mt-4">
+  <!-- file picker — auto-parses on file pick, so the user doesn't have to
+       press the button after choosing a file -->
   <div class="mb-3">
-    <label for="jsonInput" class="form-label">Paste your JSON here:</label>
-    <textarea
-      id="jsonInput"
-      class="form-control"
-      [(ngModel)]="jsonText"
-      placeholder="Paste JSON here..."
-      rows="10"
-      style="overflow-y: auto;"
-    ></textarea>
+    <label for="fileInput" class="form-label fw-bold">Upload a JSON file</label>
+    <input id="fileInput"
+           type="file"
+           accept=".json,application/json"
+           class="form-control"
+           (change)="onFileSelected($event)">
+    <div class="form-text">Picking a file will auto-fill the textarea below and parse it.</div>
   </div>
 
-  <button class="btn btn-primary" (click)="parseJson()">Parse JSON</button>
+  <!-- paste-in textarea — handy for quick edits / small test imports -->
+  <div class="mb-3">
+    <label for="jsonInput" class="form-label fw-bold">…or paste JSON here</label>
+    <textarea id="jsonInput"
+              class="form-control"
+              [(ngModel)]="jsonText"
+              placeholder="Paste JSON here..."
+              rows="8"
+              style="font-family: monospace; font-size: 0.85rem;"></textarea>
+  </div>
+
+  <!-- example format collapsed by default so it doesn't crowd the UI -->
+  <details class="mb-3">
+    <summary class="text-muted small" style="cursor: pointer;">Show example format</summary>
+    <pre class="bg-light p-3 mt-2 rounded small" style="overflow-x: auto;">{{ exampleJson }}</pre>
+    <div class="form-text">
+      Must be an array. Each entry needs all six fields. Valid difficulties: Easy / Moderate / Challenging.
+      Valid transport types: foot-walking / cycling-regular / driving-car / foot-hiking.
+    </div>
+  </details>
+
+  <div class="mb-4">
+    <button class="btn btn-primary" (click)="parseJson()" [disabled]="!jsonText.trim()">
+      Parse
+    </button>
+    <button class="btn btn-link text-secondary" (click)="reset()">Clear</button>
+  </div>
+
+  <!-- parse error -->
+  @if (parseError) {
+    <div class="alert alert-danger" role="alert">
+      {{ parseError }}
+    </div>
+  }
+
+  <!-- preview table: shown after a successful parse, until the user either
+       imports or clears -->
+  @if (parsedTours && parsedTours.length > 0) {
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+      <div class="card-header bg-light fw-bold">
+        Preview — {{ parsedTours.length }} tour(s) to import
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 3rem;">#</th>
+              <th>Name</th>
+              <th>Start</th>
+              <th>End</th>
+              <th>Transport</th>
+              <th>Difficulty</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (t of parsedTours; track $index) {
+              <tr>
+                <td class="text-muted">{{ $index + 1 }}</td>
+                <td>{{ t.name }}</td>
+                <td>{{ t.start }}</td>
+                <td>{{ t.end }}</td>
+                <td><span class="badge bg-secondary">{{ t.transportType }}</span></td>
+                <td>{{ t.difficulty }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer bg-white d-flex justify-content-end gap-2">
+        <button class="btn btn-light" (click)="reset()" [disabled]="isImporting">Cancel</button>
+        <button class="btn btn-success"
+                (click)="importParsedTours()"
+                [disabled]="isImporting">
+          {{ isImporting ? 'Importing...' : 'Import ' + parsedTours.length + ' tour(s)' }}
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- success banner — shown after a finished import -->
+  @if (lastImportedCount !== null) {
+    <div class="alert alert-success d-flex justify-content-between align-items-center" role="alert">
+      <span>Imported {{ lastImportedCount }} tour(s) successfully.</span>
+      <button class="btn btn-sm btn-outline-success" (click)="reset()">Import more</button>
+    </div>
+  }
 </div>
