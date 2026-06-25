@@ -142,7 +142,7 @@ export class TourLogService {
 
 getImage(imagePath: string): Observable<string> {
   return this.http.get(
-    `http://localhost:8080/api/images/${encodeURIComponent(imagePath)}`,
+    `http://localhost:8080/api/images/${imagePath}`,
     { responseType: 'blob' }
   ).pipe(
     map(blob => URL.createObjectURL(blob))
