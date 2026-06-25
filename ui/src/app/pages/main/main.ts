@@ -47,7 +47,8 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
     comment: '',
     duration: 0,
     difficultyRating: 'Moderate',
-    image: '',
+    imageEncoded: '',
+    imageName: '',
     totalDistance: 0   // gets set to tour.distance when the modal opens
   };
 
@@ -94,20 +95,25 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
    * Log Modal logic
    */
   openLogModal(tour: Tour): void {
+    console.log("SAVE CLICKED");
+    console.log(this.newLog);
     this.selectedTour = tour;
     this.newLog = {
       date: new Date().toISOString().split('T')[0],
       comment: '',
       duration: 0,
       difficultyRating: '',
-      image: '',
+      imageEncoded: '',
       // pre-fill with the planned tour distance — user can adjust if they took a detour
-      totalDistance: tour.distance
+      totalDistance: tour.distance,
+      imageName: '',
     };
     this.isLogModalOpen = true;
   }
 
   saveLog(): void {
+      console.log(this.newLog);
+
     if (!this.selectedTour) {
       return;
     }
@@ -120,13 +126,13 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
       );
       return;
     }
-
     // Now hits the backend instead of just storing in memory.
     // The service handles updating the cache so other pages (like profile) see the new log.
+
     this.tourLogService.addTourLog(this.selectedTour, this.newLog).subscribe({
       next: () => {
         this.toastService.show(
-          `Completion log added for "${this.selectedTour!.name}"!`,
+          `Completion log added for "${this.selectedTour!.name}"!"`,
           ToastType.Success
         );
         this.closeLogModal();
@@ -173,12 +179,19 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
   }
   onFileSelected(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
+
     if (!file) return;
 
     const reader = new FileReader();
 
     reader.onload = () => {
-      this.newLog.image = reader.result as string;
+      const dataUrl = reader.result as string;
+
+      // Get only the bytes (remove data:image/...;base64,)
+      const base64 = dataUrl.split(',')[1];
+
+      this.newLog.imageEncoded = base64;
+      this.newLog.imageName = file.name;
     };
 
     reader.readAsDataURL(file);

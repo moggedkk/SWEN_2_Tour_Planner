@@ -14,6 +14,8 @@ interface TourLogResponse {
   totalDistance: number;
   totalTime: number;
   rating: number;
+  imageName: string;
+  imagePath: string;
 }
 
 // What we SEND to the backend (matches TourLogRequest.java)
@@ -24,6 +26,8 @@ interface TourLogRequest {
   totalDistance: number;
   totalTime: number;
   rating: number;
+  imageName: string;
+  imageEncoded: string;
 }
 
 // What the components actually work with — the basic TourLog form fields
@@ -32,6 +36,7 @@ export interface TourLogEntry extends TourLog {
   id: number;
   tourId: number;
   tourName: string;
+  imagePath: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -75,6 +80,8 @@ export class TourLogService {
   }
 
   addTourLog(tour: Tour, log: TourLog): Observable<TourLogEntry> {
+    console.log("LOG BEFORE REQUEST:", log);
+     console.log("REQUEST:", this.toRequest(log));
     return this.http.post<TourLogResponse>(
       `${this.apiUrl}/${tour.id}/logs`,
       this.toRequest(log)
@@ -133,6 +140,15 @@ export class TourLogService {
     return grouped;
   }
 
+getImage(imagePath: string): Observable<string> {
+  return this.http.get(
+    `http://localhost:8080/api/images/${encodeURIComponent(imagePath)}`,
+    { responseType: 'blob' }
+  ).pipe(
+    map(blob => URL.createObjectURL(blob))
+  );
+}
+
   // ---- shape mapping (frontend <-> backend) ----
 
   // The form fields use friendlier names ("duration", "difficultyRating").
@@ -148,7 +164,9 @@ export class TourLogService {
       // tour.distance in the component, so most users won't touch it
       totalDistance: log.totalDistance ?? 0,
       totalTime: log.duration,
-      rating: 0           // TODO add a star rating input
+      rating: 0,           // TODO add a star rating input
+      imageName: log.imageName,
+      imageEncoded: log.imageEncoded
     };
   }
 
@@ -164,7 +182,9 @@ export class TourLogService {
       difficultyRating: r.difficulty,
       duration: r.totalTime,
       totalDistance: r.totalDistance,
-      image: ''  // image storage isn't wired up yet — will be a follow-up task
+      imagePath: r.imagePath,  // image storage isn't wired up yet — will be a follow-up task
+      imageEncoded: '',
+      imageName: r.imageName
     };
   }
 }

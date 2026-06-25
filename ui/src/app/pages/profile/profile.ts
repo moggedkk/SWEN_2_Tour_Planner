@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Tour, TransportType, TourLog } from '../../models/Tour';
 import { TourService } from '../../services/TourService';
 import { TourLogService, TourLogEntry } from '../../services/tourlog';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable, of } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { ToastService, ToastType } from '../../services/ToastService';
 
@@ -21,6 +21,7 @@ export class Profile implements OnInit, OnDestroy {
   groupedTourLogs: Map<string, TourLogEntry[]> = new Map();
   private toursSubscription?: Subscription;
   private tourLogsSubscription?: Subscription;
+  imageUrl: string | null = null;
 
   // Modern DI using inject()
   private tourService = inject(TourService);
@@ -121,10 +122,18 @@ export class Profile implements OnInit, OnDestroy {
   }
 
   // TourLog CRUD operations
-  onEditLog(log: TourLogEntry): void {
-    this.editingLog = { ...log };
-    this.isEditLogModalOpen = true;
+onEditLog(log: TourLogEntry): void {
+  this.editingLog = { ...log };
+  this.imageUrl = null;
+  this.isEditLogModalOpen = true;
+
+  if (log.imagePath) {
+    this.tourLogService.getImage(log.imagePath)
+      .subscribe(url => {
+        this.imageUrl = url;
+      });
   }
+}
 
   onSaveLogEdit(): void {
     if (this.editingLog) {
@@ -148,7 +157,8 @@ export class Profile implements OnInit, OnDestroy {
           comment: log.comment,
           duration: log.duration,
           difficultyRating: log.difficultyRating,
-          image: log.image,
+          imageName: log.imageName,
+          imageEncoded : log.imageEncoded,
           totalDistance: log.totalDistance
         },
         log.tourName

@@ -57,7 +57,9 @@ class TourLogServiceImplTest {
                 "easy",
                 12.5,
                 90.0,
-                5
+                5,
+                null,
+                null
         );
     }
 

@@ -13,8 +13,14 @@ import com.backend.backend.service.declaration.ITourLogService;
 import com.backend.backend.service.declaration.IUserService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 
 @Slf4j
@@ -24,6 +30,8 @@ public class TourLogServiceImpl implements ITourLogService {
     private final TourLogRepository tourLogRepository;
     private final TourRepository tourRepository;
     private final IUserService userService;
+    @Value("${storage.image-dir}")
+    private String baseImagePath;
 
     public TourLogServiceImpl(TourLogRepository tourLogRepository,
                               TourRepository tourRepository,
@@ -45,9 +53,10 @@ public class TourLogServiceImpl implements ITourLogService {
         // Step 2: build a new TourLog from the request fields
         TourLog newLog = new TourLog();
         newLog.setTour(tour);
-        copyRequestIntoLog(request, newLog);
+        copyRequestIntoLog(request, newLog, username);
 
         // Step 3: save and return as a response DTO
+
         TourLog saved = tourLogRepository.save(newLog);
         log.info("Log id={} saved for tour id={}", saved.getId(), tourId);
         return toResponse(saved);
@@ -79,7 +88,7 @@ public class TourLogServiceImpl implements ITourLogService {
             throw new TourLogNotFoundException(logId);
         }
 
-        copyRequestIntoLog(request, existing);
+        copyRequestIntoLog(request, existing, username);
         return toResponse(tourLogRepository.save(existing));
     }
 
@@ -120,13 +129,16 @@ public class TourLogServiceImpl implements ITourLogService {
     // Pulled out so create and update don't duplicate the same 6 setters.
     // Note: the parameter is called "target" instead of "log" because @Slf4j already gives us
     // a logger named "log" in this class — naming the param "log" would shadow it.
-    private void copyRequestIntoLog(TourLogRequest request, TourLog target) {
+    private void copyRequestIntoLog(TourLogRequest request, TourLog target, String username) {
         target.setDateTime(request.getDateTime());
         target.setComment(request.getComment());
         target.setDifficulty(request.getDifficulty());
         target.setTotalDistance(request.getTotalDistance());
         target.setTotalTime(request.getTotalTime());
         target.setRating(request.getRating());
+        if(request.getImageName() != null){
+            target.setFilePath(createImage(request.getImageEncoded(), request.getImageName(), username, target.getTour().getTourName()));
+        }
     }
 
     // Converts a TourLog entity to a TourLogResponse DTO.
@@ -140,7 +152,31 @@ public class TourLogServiceImpl implements ITourLogService {
                 tourLog.getDifficulty(),
                 tourLog.getTotalDistance(),
                 tourLog.getTotalTime(),
-                tourLog.getRating()
+                tourLog.getRating(),
+                tourLog.getImageName(),
+                tourLog.getFilePath()
         );
+    }
+    @Override
+    public String createImage(String imageEncoded, String imageName, String userName, String tourName){
+        String base64Data = imageEncoded;
+        if (imageEncoded.contains(",")) {
+            base64Data = imageEncoded.split(",")[1];
+        }
+        try {
+            Path parentDirectory = Paths.get(baseImagePath, userName, tourName);
+
+            Files.createDirectories(parentDirectory);
+
+            Path filePath = parentDirectory.resolve(imageName);
+            String imagePath = filePath.toAbsolutePath().toString();
+
+            byte[] imageBytes = Base64.getDecoder().decode(base64Data);
+            Files.write(filePath, imageBytes);
+            System.out.println("Image successfully created at: " + imagePath);
+            return userName + "/" + tourName + "/" + imageName;
+        } catch (IOException | IllegalArgumentException e) {
+            throw new RuntimeException("Failed to create directories or write image file: " + e.getMessage(), e);
+        }
     }
 }

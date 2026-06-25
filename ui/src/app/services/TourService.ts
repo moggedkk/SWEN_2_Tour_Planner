@@ -148,7 +148,7 @@ export class TourService {
       end: tour.end,
       description: tour.description,
       difficulty: tour.difficulty,
-      transportType: tour.transportType,
+      transportType: tour.transportType
     };
   }
 }

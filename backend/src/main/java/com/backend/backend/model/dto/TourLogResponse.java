@@ -19,4 +19,6 @@ public class TourLogResponse {
     private double totalDistance;
     private double totalTime;
     private int rating;
+    private String imageName;
+    private String imagePath;
 }

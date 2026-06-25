@@ -10,7 +10,8 @@ export interface TourLog {
   comment: string;
   duration: number; // in minutes
   difficultyRating: string;
-  image: string;
+  imageEncoded: string;
+  imageName: string;
   // how far the user actually went on this completion.
   // pre-filled with the planned tour distance, user can override
   // (e.g. if they took a detour or only did part of the tour)

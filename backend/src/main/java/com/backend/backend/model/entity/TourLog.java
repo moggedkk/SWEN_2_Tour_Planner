@@ -47,4 +47,9 @@ public class TourLog {
     @ManyToOne
     @JoinColumn(name = "tour_id", nullable = false)
     private Tour tour;
+
+    @Column(name = "file_path")
+    private String filePath;
+    @Column(name = "imagename")
+    private String imageName;
 }
