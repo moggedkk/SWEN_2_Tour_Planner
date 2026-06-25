@@ -124,15 +124,11 @@ export class Profile implements OnInit, OnDestroy {
   // TourLog CRUD operations
 onEditLog(log: TourLogEntry): void {
   this.editingLog = { ...log };
-  this.imageUrl = null;
   this.isEditLogModalOpen = true;
 
-  if (log.imagePath) {
-    this.tourLogService.getImage(log.imagePath)
-      .subscribe(url => {
-        this.imageUrl = url;
-      });
-  }
+  this.imageUrl = log.imagePath
+    ? `http://localhost:8080/api/images/${log.imagePath}`
+    : null;
 }
 
   onSaveLogEdit(): void {
