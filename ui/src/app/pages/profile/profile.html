@@ -286,10 +286,11 @@
         </form>
       </div>
       }
-    <img *ngIf="imageUrl"
-     [src]="imageUrl"
-     class="img-fluid rounded shadow-sm"
-     style="max-height: 200px; object-fit: cover;" />
+      @if (imageUrl) {
+        <img [src]="imageUrl"
+             class="img-fluid rounded shadow-sm"
+             style="max-height: 200px; object-fit: cover;" />
+      }
       <div class="modal-footer border-0 p-4 pt-0">
         <button type="button" class="btn btn-light rounded-pill px-4" (click)="onCancelLogEdit()">Cancel</button>
         <button type="button" class="btn btn-success rounded-pill px-4" (click)="onSaveLogEdit()">Save Changes</button>

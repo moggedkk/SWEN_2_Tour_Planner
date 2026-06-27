@@ -80,8 +80,6 @@ export class TourLogService {
   }
 
   addTourLog(tour: Tour, log: TourLog): Observable<TourLogEntry> {
-    console.log("LOG BEFORE REQUEST:", log);
-     console.log("REQUEST:", this.toRequest(log));
     return this.http.post<TourLogResponse>(
       `${this.apiUrl}/${tour.id}/logs`,
       this.toRequest(log)
@@ -140,14 +138,18 @@ export class TourLogService {
     return grouped;
   }
 
-getImage(imagePath: string): Observable<string> {
-  return this.http.get(
-    `http://localhost:8080/api/images/${imagePath}`,
-    { responseType: 'blob' }
-  ).pipe(
-    map(blob => URL.createObjectURL(blob))
-  );
-}
+  // Fetches the image via HttpClient (so the auth interceptor can attach the JWT —
+  // a plain <img src> can't carry custom headers) and wraps the blob in an object URL
+  // so the <img> in the modal can just bind to it.
+  // encodeURI keeps "/" as separators but escapes spaces / special chars in filenames.
+  getImage(imagePath: string): Observable<string> {
+    return this.http.get(
+      `http://localhost:8080/api/images/${encodeURI(imagePath)}`,
+      { responseType: 'blob' }
+    ).pipe(
+      map(blob => URL.createObjectURL(blob))
+    );
+  }
 
   // ---- shape mapping (frontend <-> backend) ----
 
@@ -182,7 +184,8 @@ getImage(imagePath: string): Observable<string> {
       difficultyRating: r.difficulty,
       duration: r.totalTime,
       totalDistance: r.totalDistance,
-      imagePath: r.imagePath,  // image storage isn't wired up yet — will be a follow-up task
+      // only the path comes back from the server — imageEncoded is upload-only
+      imagePath: r.imagePath,
       imageEncoded: '',
       imageName: r.imageName
     };

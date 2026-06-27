@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Tour, TransportType, TourLog } from '../../models/Tour';
 import { TourService } from '../../services/TourService';
 import { TourLogService, TourLogEntry } from '../../services/tourlog';
-import { Subscription, Observable, of } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { ToastService, ToastType } from '../../services/ToastService';
 
@@ -122,14 +122,19 @@ export class Profile implements OnInit, OnDestroy {
   }
 
   // TourLog CRUD operations
-onEditLog(log: TourLogEntry): void {
-  this.editingLog = { ...log };
-  this.isEditLogModalOpen = true;
+  // We fetch the image through TourLogService so the auth interceptor attaches the JWT —
+  // a direct <img [src]="...api/images/..."> wouldn't carry the token and the backend
+  // (correctly) requires auth on that endpoint.
+  onEditLog(log: TourLogEntry): void {
+    this.editingLog = { ...log };
+    this.imageUrl = null;
+    this.isEditLogModalOpen = true;
 
-  this.imageUrl = log.imagePath
-    ? `http://localhost:8080/api/images/${log.imagePath}`
-    : null;
-}
+    if (log.imagePath) {
+      this.tourLogService.getImage(log.imagePath)
+        .subscribe(url => this.imageUrl = url);
+    }
+  }
 
   onSaveLogEdit(): void {
     if (this.editingLog) {

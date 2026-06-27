@@ -95,8 +95,6 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
    * Log Modal logic
    */
   openLogModal(tour: Tour): void {
-    console.log("SAVE CLICKED");
-    console.log(this.newLog);
     this.selectedTour = tour;
     this.newLog = {
       date: new Date().toISOString().split('T')[0],
@@ -112,8 +110,6 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
   }
 
   saveLog(): void {
-      console.log(this.newLog);
-
     if (!this.selectedTour) {
       return;
     }
@@ -132,7 +128,7 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
     this.tourLogService.addTourLog(this.selectedTour, this.newLog).subscribe({
       next: () => {
         this.toastService.show(
-          `Completion log added for "${this.selectedTour!.name}"!"`,
+          `Completion log added for "${this.selectedTour!.name}"!`,
           ToastType.Success
         );
         this.closeLogModal();
