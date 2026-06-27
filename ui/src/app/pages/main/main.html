@@ -123,7 +123,7 @@
 
           <div class="d-flex align-items-center justify-content-between pt-3 border-top">
             <div class="small fw-bold text-dark">
-              {{ tour.distance }} km <span class="text-muted fw-normal ms-1">({{ tour.estimatedTime }} min)</span>
+              {{ (tour.distance / 1000) | number:'1.0-1' }} km <span class="text-muted fw-normal ms-1">({{ formatDuration(tour.estimatedTime) }})</span>
             </div>
             <button class="btn btn-outline-primary btn-sm rounded-pill px-3"
                     (click)="$event.stopPropagation(); openLogModal(tour)">

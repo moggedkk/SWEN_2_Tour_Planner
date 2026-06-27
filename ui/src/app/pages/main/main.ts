@@ -146,6 +146,14 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
     return new Date().toISOString().split('T')[0];
   }
 
+  // backend stores estimatedTime in seconds — same helper that tour-details uses,
+  // so the format ("2h 5min" / "45min") stays consistent across the app.
+  formatDuration(seconds: number): string {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    return h > 0 ? `${h}h ${m}min` : `${m}min`;
+  }
+
   async ngAfterViewInit() {
     if (typeof window === 'undefined') return;
 
