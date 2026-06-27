@@ -20,6 +20,9 @@ services:
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      # secrets — pulled from .env, not hardcoded
+      - JWT_SECRET=${JWT_SECRET}
+      - OPENROUTESERVICE_APIKEY=${OPENROUTESERVICE_APIKEY}
     depends_on:
       - database
 
