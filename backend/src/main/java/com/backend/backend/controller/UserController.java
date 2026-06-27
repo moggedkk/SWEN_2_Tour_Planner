@@ -5,6 +5,7 @@ import com.backend.backend.model.dto.TokenResponse;
 import com.backend.backend.model.entity.User;
 import com.backend.backend.security.jwt.JwtConfig;
 import com.backend.backend.service.declaration.IUserService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<TokenResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<TokenResponse> register(@Valid @RequestBody RegisterRequest request) {
         log.info("Registration attempt for username '{}'", request.getUsername());
         User user = userService.registerUser(request);
         String token = jwtConfig.createJWT(user.getUsername());

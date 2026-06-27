@@ -3,6 +3,7 @@ package com.backend.backend.controller;
 import com.backend.backend.model.dto.TourLogRequest;
 import com.backend.backend.model.dto.TourLogResponse;
 import com.backend.backend.service.declaration.ITourLogService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class TourLogController {
 
     @PostMapping
     public ResponseEntity<TourLogResponse> create(@PathVariable int tourId,
-                                                  @RequestBody TourLogRequest request) {
+                                                  @Valid @RequestBody TourLogRequest request) {
         // SecurityContextHolder is how Spring tells us which user is logged in.
         // The JwtAuthFilter puts the username here after verifying the token.
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -45,7 +46,7 @@ public class TourLogController {
     @PutMapping("/{logId}")
     public ResponseEntity<TourLogResponse> update(@PathVariable int tourId,
                                                   @PathVariable int logId,
-                                                  @RequestBody TourLogRequest request) {
+                                                  @Valid @RequestBody TourLogRequest request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return ResponseEntity.ok(tourLogService.updateLog(tourId, logId, request, username));
     }

@@ -3,7 +3,9 @@ package com.backend.backend.controller;
 import com.backend.backend.model.dto.TourRequest;
 import com.backend.backend.model.dto.TourResponse;
 import com.backend.backend.service.declaration.ITourService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,8 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// @Validated on the class so the @Valid on list elements (in /import) gets picked up.
 @Slf4j
 @RestController
+@Validated
 @RequestMapping("/api/tours")
 @CrossOrigin
 public class TourController {
@@ -24,7 +28,7 @@ public class TourController {
     }
 
     @PostMapping
-    public ResponseEntity<TourResponse> create(@RequestBody TourRequest request) {
+    public ResponseEntity<TourResponse> create(@Valid @RequestBody TourRequest request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         log.info("User '{}' creating tour '{}'", username, request.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(tourService.createTour(request, username));
@@ -33,8 +37,10 @@ public class TourController {
     // bulk import. all-or-nothing: a single bad tour rolls back the whole batch
     // and the user gets a 500 with the failing tour's index + reason. on success
     // we return 201 with the full list of created tours.
+    // @Valid on the element type so each TourRequest in the list gets checked.
+    // A single bad entry fails the whole batch with a 400 + field errors.
     @PostMapping("/import")
-    public ResponseEntity<List<TourResponse>> importTours(@RequestBody List<TourRequest> requests) {
+    public ResponseEntity<List<TourResponse>> importTours(@RequestBody List<@Valid TourRequest> requests) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         log.info("User '{}' importing {} tour(s)", username, requests.size());
         return ResponseEntity.status(HttpStatus.CREATED).body(tourService.importTours(requests, username));
@@ -80,7 +86,7 @@ public class TourController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TourResponse> update(@PathVariable int id, @RequestBody TourRequest request) {
+    public ResponseEntity<TourResponse> update(@PathVariable int id, @Valid @RequestBody TourRequest request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         log.info("User '{}' updating tour id={}", username, id);
         return ResponseEntity.ok(tourService.updateTour(id, request, username));

@@ -1,11 +1,15 @@
 package com.backend.backend.exception;
 
 import com.backend.backend.model.dto.ErrorResponse;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
@@ -45,5 +49,27 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleImageStorage(ImageStorageException ex) {
         log.warn("Image upload rejected: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
+    }
+
+    // Triggered when @Valid on a @RequestBody fails — collects every field error into one
+    // human-readable string so the frontend can show it in a toast without parsing JSON.
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
+        String msg = ex.getBindingResult().getFieldErrors().stream()
+                .map(fe -> fe.getField() + ": " + fe.getDefaultMessage())
+                .collect(Collectors.joining("; "));
+        log.warn("Request validation failed: {}", msg);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(msg));
+    }
+
+    // Same idea but for @Validated on the controller class (list-element validation
+    // on /api/tours/import, query params, etc).
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraint(ConstraintViolationException ex) {
+        String msg = ex.getConstraintViolations().stream()
+                .map(v -> v.getPropertyPath() + ": " + v.getMessage())
+                .collect(Collectors.joining("; "));
+        log.warn("Request validation failed: {}", msg);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(msg));
     }
 }
