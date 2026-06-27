@@ -22,6 +22,4 @@ public interface ITourLogService {
 
     // used internally when a whole tour is deleted — wipes all its logs first
     void deleteAllLogsForTour(Tour tour);
-
-    String createImage(String imageEncoded, String imageName, String userName, String tourName);
 }
