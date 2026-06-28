@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { Navbar } from '../../components/navbar/navbar';
 import { CommonModule } from '@angular/common';
 import { Tour, TransportType, TourLog } from '../../models/Tour';
@@ -21,7 +21,7 @@ export class Profile implements OnInit, OnDestroy {
   groupedTourLogs: Map<string, TourLogEntry[]> = new Map();
   private toursSubscription?: Subscription;
   private tourLogsSubscription?: Subscription;
-  imageUrl: string | null = null;
+  imageUrl = signal<string | null>(null);
 
   // Modern DI using inject()
   private tourService = inject(TourService);
@@ -79,7 +79,13 @@ export class Profile implements OnInit, OnDestroy {
   }
 
   onEditTour(tour: Tour): void {
-    this.editingTour = { ...tour };
+    // backend stores distance in meters and estimatedTime in seconds, but the edit
+    // inputs are labeled km / min — convert on the way in so the form is honest.
+    this.editingTour = {
+      ...tour,
+      distance: tour.distance / 1000,
+      estimatedTime: tour.estimatedTime / 60,
+    };
     this.isEditModalOpen = true;
   }
 
@@ -95,7 +101,14 @@ export class Profile implements OnInit, OnDestroy {
         return;
       }
 
-      this.tourService.updateTour(this.editingTour).subscribe({
+      // convert back to the units the backend expects (m / s)
+      const payload: Tour = {
+        ...this.editingTour,
+        distance: Math.round(this.editingTour.distance * 1000),
+        estimatedTime: Math.round(this.editingTour.estimatedTime * 60),
+      };
+
+      this.tourService.updateTour(payload).subscribe({
         next: () => {
           this.toastService.show(`Tour "${this.editingTour!.name}" updated successfully!`, ToastType.Success);
           this.closeModal();
@@ -127,12 +140,15 @@ export class Profile implements OnInit, OnDestroy {
   // (correctly) requires auth on that endpoint.
   onEditLog(log: TourLogEntry): void {
     this.editingLog = { ...log };
-    this.imageUrl = null;
+    this.imageUrl.set(null);
     this.isEditLogModalOpen = true;
 
     if (log.imagePath) {
       this.tourLogService.getImage(log.imagePath)
-        .subscribe(url => this.imageUrl = url);
+        .subscribe({
+          next: url => this.imageUrl.set(url),
+          error: err => console.error('[onEditLog] image fetch failed:', err)
+        });
     }
   }
 

@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// @Validated on the class so the @Valid on list elements (in /import) gets picked up.
+// @Validated enables Spring's method validation, which is required for
+// container element validation (List<@Valid TourRequest>) in /import.
 @Slf4j
 @RestController
 @Validated
