@@ -43,11 +43,9 @@ export class Profile implements OnInit, OnDestroy {
 
   ngOnInit() {
      const authToken = this.authService.getToken();
-      console.log("TOken"+authToken)
     if (authToken) {
       const token = authToken.replace('Bearer ', '');
       const payload = JSON.parse(atob(token.split('.')[1]));
-      console.log("Payload"+payload);
       this.username = payload.sub;
     }
     this.toursSubscription = this.tourService.tours$.subscribe(tours => {
