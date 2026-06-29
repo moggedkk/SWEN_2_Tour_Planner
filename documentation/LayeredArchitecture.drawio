@@ -1,0 +1,124 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Layered Architecture" id="layered-1">
+    <mxGraphModel dx="1414" dy="879" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="frontend" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" value="Angular Frontend (browser)" vertex="1">
+          <mxGeometry height="50" width="500" x="400" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_fe_security" edge="1" parent="1" source="frontend" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="security">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_fe_security_label" connectable="0" parent="edge_fe_security" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="HTTP + JWT (Authorization header)" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="security" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=2;" value="Security: SecurityFilterChain → JwtAuthFilter (validates token, writes into SecurityContext)" vertex="1">
+          <mxGeometry height="40" width="900" x="200" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_security_ctrl" edge="1" parent="1" source="security" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="layer_controller">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="layer_controller" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=top;align=left;spacingLeft=10;fontStyle=1;" value="Controller Layer (@RestController)" vertex="1">
+          <mxGeometry height="110" width="900" x="200" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="ctrl_user" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" value="UserController" vertex="1">
+          <mxGeometry height="60" width="160" x="215" y="225" as="geometry" />
+        </mxCell>
+        <mxCell id="ctrl_session" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" value="SessionController" vertex="1">
+          <mxGeometry height="60" width="160" x="390" y="225" as="geometry" />
+        </mxCell>
+        <mxCell id="ctrl_tour" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" value="TourController" vertex="1">
+          <mxGeometry height="60" width="160" x="565" y="225" as="geometry" />
+        </mxCell>
+        <mxCell id="ctrl_tourlog" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" value="TourLogController" vertex="1">
+          <mxGeometry height="60" width="160" x="740" y="225" as="geometry" />
+        </mxCell>
+        <mxCell id="ctrl_image" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" value="ImageController" vertex="1">
+          <mxGeometry height="60" width="160" x="915" y="225" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_ctrl_svc" edge="1" parent="1" source="layer_controller" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="layer_service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="layer_service" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=top;align=left;spacingLeft=10;fontStyle=1;" value="Service Layer (interfaces + @Service implementations)" vertex="1">
+          <mxGeometry height="120" width="900" x="200" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="svc_user" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" value="UserServiceImpl&lt;br&gt;&lt;i&gt;(IUserService)&lt;/i&gt;" vertex="1">
+          <mxGeometry height="70" width="160" x="215" y="365" as="geometry" />
+        </mxCell>
+        <mxCell id="svc_session" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" value="SessionServiceImpl&lt;br&gt;&lt;i&gt;(ISessionService)&lt;/i&gt;" vertex="1">
+          <mxGeometry height="70" width="160" x="390" y="365" as="geometry" />
+        </mxCell>
+        <mxCell id="svc_tour" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" value="TourServiceImpl&lt;br&gt;&lt;i&gt;(ITourService)&lt;/i&gt;" vertex="1">
+          <mxGeometry height="70" width="160" x="565" y="365" as="geometry" />
+        </mxCell>
+        <mxCell id="svc_tourlog" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" value="TourLogServiceImpl&lt;br&gt;&lt;i&gt;(ITourLogService)&lt;/i&gt;" vertex="1">
+          <mxGeometry height="70" width="160" x="740" y="365" as="geometry" />
+        </mxCell>
+        <mxCell id="svc_ors" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" value="OpenRouteServiceImpl&lt;br&gt;&lt;i&gt;(IOpenRouteService)&lt;/i&gt;" vertex="1">
+          <mxGeometry height="70" width="160" x="915" y="365" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_svc_repo" edge="1" parent="1" source="layer_service" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="layer_repo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="layer_repo" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=top;align=left;spacingLeft=10;fontStyle=1;" value="Repository Layer (Spring Data JPA)" vertex="1">
+          <mxGeometry height="110" width="900" x="200" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="repo_user" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" value="UserRepository" vertex="1">
+          <mxGeometry height="60" width="160" x="215" y="515" as="geometry" />
+        </mxCell>
+        <mxCell id="repo_tour" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" value="TourRepository" vertex="1">
+          <mxGeometry height="60" width="160" x="390" y="515" as="geometry" />
+        </mxCell>
+        <mxCell id="repo_tourlog" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" value="TourLogRepository" vertex="1">
+          <mxGeometry height="60" width="160" x="565" y="515" as="geometry" />
+        </mxCell>
+        <mxCell id="repo_diff" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" value="DifficultyRepository" vertex="1">
+          <mxGeometry height="60" width="160" x="740" y="515" as="geometry" />
+        </mxCell>
+        <mxCell id="repo_transport" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;" value="TourTransportType-&lt;br&gt;Repository" vertex="1">
+          <mxGeometry height="60" width="160" x="915" y="515" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_repo_db" edge="1" parent="1" source="layer_repo" style="endArrow=classic;html=1;exitX=0.5;exitY=1;" target="C9Dq11dnVcxCfgQoX_Py-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_repo_db_label" connectable="0" parent="edge_repo_db" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="JDBC" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="exception_handler" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;spacing=8;fillColor=#f8cecc;strokeColor=#b85450;" value="&lt;b&gt;GlobalExceptionHandler&lt;/b&gt;&lt;br&gt;&lt;i&gt;(@RestControllerAdvice)&lt;/i&gt;&lt;br&gt;&lt;br&gt;Maps exceptions thrown by any layer into ErrorResponse + HTTP status." vertex="1">
+          <mxGeometry height="110" width="240" x="1130" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_exc_ctrl" edge="1" parent="1" source="exception_handler" style="endArrow=none;html=1;dashed=1;dashPattern=1 3;" target="layer_controller">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="filesystem" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;spacing=8;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;b&gt;Local Filesystem&lt;/b&gt;&lt;br&gt;&lt;i&gt;/app/images/&lt;user&gt;/&lt;tourId&gt;/&lt;/i&gt;&lt;br&gt;&lt;br&gt;TourLogServiceImpl writes uploaded images; ImageController serves them." vertex="1">
+          <mxGeometry height="120" width="240" x="1130" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_fs_image" edge="1" parent="1" source="filesystem" style="endArrow=none;html=1;dashed=1;dashPattern=1 3;" target="ctrl_image">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_fs_tourlog" edge="1" parent="1" source="filesystem" style="endArrow=none;html=1;dashed=1;dashPattern=1 3;" target="svc_tourlog">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ors_api" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;spacing=8;fillColor=#e1d5e7;strokeColor=#9673a6;" value="&lt;b&gt;OpenRouteService API&lt;/b&gt;&lt;br&gt;&lt;i&gt;(external HTTPS)&lt;/i&gt;&lt;br&gt;&lt;br&gt;Called by OpenRouteServiceImpl for geocoding and route calculation." vertex="1">
+          <mxGeometry height="110" width="240" x="1130" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_ors" edge="1" parent="1" source="svc_ors" style="endArrow=classic;html=1;dashed=1;dashPattern=1 3;" target="ors_api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_ors_label" connectable="0" parent="edge_ors" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="HTTPS" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="C9Dq11dnVcxCfgQoX_Py-1" parent="1" style="shape=datastore;whiteSpace=wrap;html=1;fillColor=light-dark(#FFFFFF,#000066);" value="PostgreSQL" vertex="1">
+          <mxGeometry height="80" width="200" x="550" y="650" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

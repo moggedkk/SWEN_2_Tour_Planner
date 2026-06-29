@@ -1,0 +1,156 @@
+<mxfile host="app.diagrams.net" version="29.6.0">
+  <diagram name="Full-Text Search" id="seq-fts-1">
+    <mxGraphModel dx="1422" dy="757" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="ll_user" value="User" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="120" height="800" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_ui" value="Angular UI&#10;(main.ts + TourService)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="190" y="40" width="160" height="800" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_jwt" value="JwtAuthFilter" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="390" y="40" width="120" height="800" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_ctrl" value="TourController" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="550" y="40" width="120" height="800" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_svc" value="TourServiceImpl" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="710" y="40" width="120" height="800" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_repo_tour" value="TourRepository" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="870" y="40" width="120" height="800" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_repo_log" value="TourLogRepository" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="40" width="140" height="800" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_db" value="PostgreSQL" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1210" y="40" width="120" height="800" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m1" value="fills search fields, clicks &quot;Search Tours&quot;" style="endArrow=classic;html=1;fontSize=11;verticalAlign=bottom;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="100" y="120" as="sourcePoint" />
+            <mxPoint x="270" y="120" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m2" value="GET /api/tours/search?start=&amp;end=&amp;transport=&amp;q=&#10;Authorization: Bearer &lt;jwt&gt;" style="endArrow=classic;html=1;fontSize=11;verticalAlign=bottom;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="270" y="180" as="sourcePoint" />
+            <mxPoint x="450" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m3" value="validate JWT,&#10;set SecurityContext" style="endArrow=classic;html=1;fontSize=11;verticalAlign=bottom;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="450" y="240" as="sourcePoint" />
+            <mxPoint x="610" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m4" value="searchTours(start, end, transport, q, username)" style="endArrow=classic;html=1;fontSize=11;verticalAlign=bottom;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="290" as="sourcePoint" />
+            <mxPoint x="770" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m5" value="findByUser(user)" style="endArrow=classic;html=1;fontSize=11;verticalAlign=bottom;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="770" y="335" as="sourcePoint" />
+            <mxPoint x="930" y="335" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m6" value="SELECT * FROM tour WHERE user_id = ?" style="endArrow=classic;html=1;fontSize=11;verticalAlign=bottom;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="930" y="375" as="sourcePoint" />
+            <mxPoint x="1270" y="375" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m7" value="rows" style="endArrow=open;html=1;dashed=1;fontSize=11;verticalAlign=bottom;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1270" y="410" as="sourcePoint" />
+            <mxPoint x="930" y="410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m8" value="List&lt;Tour&gt;" style="endArrow=open;html=1;dashed=1;fontSize=11;verticalAlign=bottom;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="930" y="445" as="sourcePoint" />
+            <mxPoint x="770" y="445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="loop_frame" value="loop  [for each Tour]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;dashed=1;fontStyle=2;fontSize=11;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="700" y="475" width="640" height="240" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m9" value="findByTour(tour)" style="endArrow=classic;html=1;fontSize=11;verticalAlign=bottom;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="770" y="520" as="sourcePoint" />
+            <mxPoint x="1100" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m10" value="SELECT * FROM tour_log WHERE tour_id = ?" style="endArrow=classic;html=1;fontSize=11;verticalAlign=bottom;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1100" y="560" as="sourcePoint" />
+            <mxPoint x="1270" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m11" value="rows" style="endArrow=open;html=1;dashed=1;fontSize=11;verticalAlign=bottom;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1270" y="595" as="sourcePoint" />
+            <mxPoint x="1100" y="595" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m12" value="List&lt;TourLog&gt;" style="endArrow=open;html=1;dashed=1;fontSize=11;verticalAlign=bottom;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1100" y="630" as="sourcePoint" />
+            <mxPoint x="770" y="630" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m13" value="buildSearchableText(tour)&#10;.toLowerCase().contains(query)?" style="endArrow=classic;html=1;fontSize=11;verticalAlign=bottom;curved=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="770" y="680" as="sourcePoint" />
+            <mxPoint x="770" y="700" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="820" y="680" />
+              <mxPoint x="820" y="700" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m14" value="List&lt;TourResponse&gt;  (filtered)" style="endArrow=open;html=1;dashed=1;fontSize=11;verticalAlign=bottom;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="770" y="745" as="sourcePoint" />
+            <mxPoint x="610" y="745" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m15" value="200 OK  +  JSON body" style="endArrow=open;html=1;dashed=1;fontSize=11;verticalAlign=bottom;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="785" as="sourcePoint" />
+            <mxPoint x="270" y="785" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m16" value="renders matching tour cards" style="endArrow=open;html=1;dashed=1;fontSize=11;verticalAlign=bottom;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="270" y="820" as="sourcePoint" />
+            <mxPoint x="100" y="820" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
