@@ -14,6 +14,7 @@ import com.backend.backend.service.declaration.ITourLogService;
 import com.backend.backend.service.declaration.IUserService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -112,8 +113,8 @@ public class TourLogServiceImpl implements ITourLogService {
         if (existing.getTour().getId() != tour.getId()) {
             throw new TourLogNotFoundException(logId);
         }
-
         tourLogRepository.delete(existing);
+        deleteImage(existing.getFilePath());
     }
 
     @Override
@@ -121,6 +122,7 @@ public class TourLogServiceImpl implements ITourLogService {
     public void deleteAllLogsForTour(Tour tour) {
         log.debug("Deleting all logs for tour id={}", tour.getId());
         tourLogRepository.deleteByTour(tour);
+        deleteAllImages();
     }
 
     // ----- helpers below -----
@@ -228,6 +230,44 @@ public class TourLogServiceImpl implements ITourLogService {
             return username + "/" + tourId + "/" + safeFilename;
         } catch (IOException e) {
             throw new ImageStorageException("Failed to write image to disk: " + e.getMessage(), e);
+        }
+    }
+
+    private void deleteImage(String imagePath){
+        try {
+            Path baseDir = Paths.get(baseImagePath).toAbsolutePath().normalize();
+
+            // imagePath is stored like: username/tourId/filename.jpg
+            Path targetFile = baseDir.resolve(imagePath).normalize();
+
+            // security check (same as save)
+            if (!targetFile.startsWith(baseDir)) {
+                throw new ImageStorageException("Refusing to delete outside of image directory");
+            }
+
+            boolean deleted = Files.deleteIfExists(targetFile);
+
+            if (deleted) {
+                log.info("Deleted image: {}", targetFile);
+            } else {
+                log.warn("Image not found for deletion: {}", targetFile);
+            }
+
+        } catch (IOException e) {
+            throw new ImageStorageException("Failed to delete image: " + e.getMessage(), e);
+        }
+    }
+
+    private void deleteAllImages() {
+        try {
+            Path baseDir = Paths.get(baseImagePath).toAbsolutePath().normalize();
+
+            FileUtils.cleanDirectory(baseDir.toFile());
+
+            log.info("Cleaned image directory: {}", baseDir);
+
+        } catch (IOException e) {
+            throw new ImageStorageException("Failed to clean image directory", e);
         }
     }
 }
