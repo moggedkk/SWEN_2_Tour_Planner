@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Tour, TransportType, TourLog } from '../../models/Tour';
 import { TourService } from '../../services/TourService';
 import { TourLogService, TourLogEntry } from '../../services/tourlog';
+import { AuthService } from '../../services/AuthService';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { ToastService, ToastType } from '../../services/ToastService';
@@ -25,6 +26,7 @@ export class Profile implements OnInit, OnDestroy {
 
   // Modern DI using inject()
   private tourService = inject(TourService);
+  private authService = inject(AuthService);
   private tourLogService = inject(TourLogService);
   private toastService = inject(ToastService);
 
@@ -40,6 +42,12 @@ export class Profile implements OnInit, OnDestroy {
   constructor() {}
 
   ngOnInit() {
+     const authToken = this.authService.getToken();
+    if (authToken) {
+      const token = authToken.replace('Bearer ', '');
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      this.username = payload.sub;
+    }
     this.toursSubscription = this.tourService.tours$.subscribe(tours => {
       this.createdTours = tours;
     });
