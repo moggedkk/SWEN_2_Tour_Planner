@@ -196,6 +196,25 @@ export class Profile implements OnInit, OnDestroy {
       });
     }
   }
+  onFileSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+
+      // Get only the bytes (remove data:image/...;base64,)
+      const base64 = dataUrl.split(',')[1];
+
+      this.editingLog!.imageEncoded = base64;
+      this.editingLog!.imageName = file.name;
+    };
+
+    reader.readAsDataURL(file);
+  }
 
   onCancelLogEdit(): void {
     this.closeLogModal();

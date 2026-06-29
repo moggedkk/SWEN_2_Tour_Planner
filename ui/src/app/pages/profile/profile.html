@@ -285,6 +285,7 @@
           </div>
         </form>
       </div>
+
       }
       @if (imageUrl(); as url) {
         <img [src]="url"
@@ -293,6 +294,7 @@
              style="max-height: 200px; object-fit: cover;" />
       }
       <div class="modal-footer border-0 p-4 pt-0">
+        <input type="file" class="form-control" accept="image/png, image/jpeg" (change)="onFileSelected($event)">
         <button type="button" class="btn btn-light rounded-pill px-4" (click)="onCancelLogEdit()">Cancel</button>
         <button type="button" class="btn btn-success rounded-pill px-4" (click)="onSaveLogEdit()">Save Changes</button>
       </div>
