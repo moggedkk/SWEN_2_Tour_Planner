@@ -2,6 +2,7 @@ package com.backend.backend.service.implementation;
 
 import com.backend.backend.exception.UsernameAlreadyExistsException;
 import com.backend.backend.model.dto.RegisterRequest;
+import com.backend.backend.model.dto.UpdateProfileRequest;
 import com.backend.backend.model.entity.User;
 import com.backend.backend.repository.UserRepository;
 import com.backend.backend.service.declaration.IUserService;
@@ -35,6 +36,24 @@ public class UserServiceImpl implements IUserService {
         user.setHash(passwordEncoder.encode(request.getPassword()));
         User saved = userRepository.save(user);
         log.info("User '{}' registered with id={}", saved.getUsername(), saved.getId());
+        return saved;
+    }
+
+    @Override
+    public User updateUser(String currentUsername, UpdateProfileRequest request) {
+        User user = userRepository.findByUsername(currentUsername).orElseThrow();
+        // Only guard the uniqueness check when the username actually changes —
+        // otherwise existsByUsername would trip on the user's own row.
+        if (!currentUsername.equals(request.getUsername())
+                && userRepository.existsByUsername(request.getUsername())) {
+            log.warn("Profile update failed: username '{}' already taken", request.getUsername());
+            throw new UsernameAlreadyExistsException(request.getUsername());
+        }
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setHash(passwordEncoder.encode(request.getPassword()));
+        User saved = userRepository.save(user);
+        log.info("User id={} updated profile (username now '{}')", saved.getId(), saved.getUsername());
         return saved;
     }
 
