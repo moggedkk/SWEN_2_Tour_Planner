@@ -33,7 +33,11 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for REST APIs
             .cors(withDefaults()) // Use the @CrossOrigin configuration from controllers
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/users/**", "/api/sessions/**").permitAll() // Allow these without login
+                // Registration (POST /api/users) and login (POST /api/sessions) are the only
+                // anonymous entry points; everything else under /api/users requires a JWT
+                // so /api/users/me can't be hit unauthenticated.
+                .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                .requestMatchers("/api/sessions/**").permitAll()
                 .anyRequest().authenticated() // Everything else is protected (incl. /api/images/**)
             )
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
