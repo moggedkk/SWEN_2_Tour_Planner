@@ -225,6 +225,7 @@ public class TourLogServiceImpl implements ITourLogService {
 
             Files.createDirectories(targetDir);
             Files.write(targetFile, imageBytes);
+            log.info("FINAL ABSOLUTE FILE PATH: {}", targetFile.toAbsolutePath());
             log.info("Saved image for user '{}' tour id={} -> {}", username, tourId, targetFile);
 
             return username + "/" + tourId + "/" + safeFilename;
