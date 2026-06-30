@@ -23,6 +23,8 @@ services:
       # secrets — pulled from .env, not hardcoded
       - JWT_SECRET=${JWT_SECRET}
       - OPENROUTESERVICE_APIKEY=${OPENROUTESERVICE_APIKEY}
+    volumes:
+      - ./backend/images:/app/images
     depends_on:
       - database
 
