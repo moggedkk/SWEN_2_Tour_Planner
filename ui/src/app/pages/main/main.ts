@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, AfterViewInit, signal } from '@angular/core';
 import { Navbar } from '../../components/navbar/navbar';
 import { CommonModule } from '@angular/common';
 import { Tour, TransportType, TourLog } from '../../models/Tour';
@@ -23,9 +23,12 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
   private tourLogService = inject(TourLogService);
   private toastService = inject(ToastService);
 
-  // Data
-  allTours: Tour[] = [];
-  filteredTours: Tour[] = [];
+  // Data — signals so updates from async RxJS callbacks trigger CD in zoneless mode
+  allTours = signal<Tour[]>([]);
+  filteredTours = signal<Tour[]>([]);
+  // distinguishes "still fetching" from "fetched, no results" so we don't
+  // flash the empty-state message before the first response arrives
+  isLoading = signal(true);
   private toursSubscription?: Subscription;
 
   // Four search fields, all AND-combined on the backend.
@@ -56,8 +59,15 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
 
   ngOnInit() {
     this.toursSubscription = this.tourService.tours$.subscribe(tours => {
-      this.allTours = tours;
-      this.filteredTours = tours; // Now shows all tours by default
+      this.allTours.set(tours);
+      this.filteredTours.set(tours); // Now shows all tours by default
+    });
+    this.tourService.loadTours().subscribe({
+      next: () => this.isLoading.set(false),
+      error: () => {
+        this.isLoading.set(false);
+        this.toastService.show('Failed to load tours.', ToastType.Danger);
+      }
     });
   }
 
@@ -75,7 +85,7 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
       !this.searchQuery?.trim();
 
     if (allEmpty) {
-      this.filteredTours = this.allTours;
+      this.filteredTours.set(this.allTours());
       return;
     }
 
@@ -86,7 +96,7 @@ export class Main implements AfterViewInit, OnInit, OnDestroy {
       this.searchTransport,
       this.searchQuery
     ).subscribe({
-      next: results => this.filteredTours = results,
+      next: results => this.filteredTours.set(results),
       error: () => this.toastService.show('Search failed.', ToastType.Danger)
     });
   }

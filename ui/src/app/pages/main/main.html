@@ -71,12 +71,12 @@
       Export tours
     </button>
     <span class="badge bg-light text-dark shadow-sm px-3 py-2 rounded-pill">
-      {{ filteredTours.length }} tours found
+      {{ filteredTours().length }} tours found
     </span>
   </div>
 
   <div class="row g-4">
-    @for (tour of filteredTours; track tour.id) {
+    @for (tour of filteredTours(); track tour.id) {
     <div class="col-md-6 col-lg-4">
       <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden tour-hover-card"
            style="cursor: pointer;"
@@ -135,7 +135,17 @@
     </div>
     }
 
-    @if (filteredTours.length === 0) {
+    @if (filteredTours().length === 0 && isLoading()) {
+      <div class="col-12">
+        <div class="text-center py-5 bg-light rounded-4 border-2 border-dashed">
+          <div class="spinner-border text-primary mb-3" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <h5 class="text-muted">Loading your tours...</h5>
+        </div>
+      </div>
+    }
+    @if (filteredTours().length === 0 && !isLoading()) {
       <div class="col-12">
         <div class="text-center py-5 bg-light rounded-4 border-2 border-dashed">
           <h5 class="text-muted">No tours match your search criteria.</h5>

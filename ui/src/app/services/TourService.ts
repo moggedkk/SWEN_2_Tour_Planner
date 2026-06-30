@@ -39,14 +39,14 @@ export class TourService {
   private toursSubject = new BehaviorSubject<Tour[]>([]);
   tours$: Observable<Tour[]> = this.toursSubject.asObservable();
 
-  constructor() {
-    this.loadTours();
-  }
-
-  loadTours(): void {
-    this.http.get<TourResponse[]>(this.apiUrl).subscribe(responses => {
-      this.toursSubject.next(responses.map(r => this.fromResponse(r)));
-    });
+  // Fetch tours on demand. Used to live in the constructor, but as a 'root'
+  // singleton that ran during SSR pre-render (no token available) - the failed
+  // call left the subject empty for the rest of the browser session.
+  loadTours(): Observable<Tour[]> {
+    return this.http.get<TourResponse[]>(this.apiUrl).pipe(
+      map(rs => rs.map(r => this.fromResponse(r))),
+      tap(tours => this.toursSubject.next(tours))
+    );
   }
 
   addTour(tour: Tour): Observable<Tour> {
