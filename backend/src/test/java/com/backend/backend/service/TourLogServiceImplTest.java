@@ -14,10 +14,12 @@ import com.backend.backend.service.implementation.TourLogServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class TourLogServiceImplTest {
@@ -40,6 +43,9 @@ class TourLogServiceImplTest {
     private User user;
     private Tour tour;
     private TourLogRequest request;
+
+    @TempDir
+    Path tempDir;
 
     @BeforeEach
     void setUp() {
@@ -61,6 +67,8 @@ class TourLogServiceImplTest {
                 null,
                 null
         );
+        ReflectionTestUtils.setField(tourLogService, "baseImagePath", tempDir.toString());
+
     }
 
     @Test
@@ -157,6 +165,7 @@ class TourLogServiceImplTest {
         TourLog existing = new TourLog();
         existing.setId(5);
         existing.setTour(tour);
+        existing.setFilePath("file/path/");
 
         when(userService.findUserByUsername("testuser")).thenReturn(Optional.of(user));
         when(tourRepository.findByIdAndUser(1, user)).thenReturn(Optional.of(tour));
