@@ -39,6 +39,12 @@ export class Profile implements OnInit, OnDestroy {
   isEditLogModalOpen = false;
   editingLog: TourLogEntry | null = null;
 
+  // Modal State for Profile
+  // email starts empty because the JWT only carries the username — we never had it client-side.
+  // A follow-up GET /api/users/me could pre-fill it.
+  isEditProfileModalOpen = false;
+  editingProfile: { username: string; email: string; password: string } | null = null;
+
   constructor() {}
 
   ngOnInit() {
@@ -250,6 +256,56 @@ export class Profile implements OnInit, OnDestroy {
 
   downloadPicture() :void{
 
+  }
+
+  // Profile edit -----------------------------------------------------------
+  onEditProfile(): void {
+    this.editingProfile = { username: this.username, email: '', password: '' };
+    this.isEditProfileModalOpen = true;
+  }
+
+  onSaveProfileEdit(): void {
+    if (!this.editingProfile) return;
+    const { username, email, password } = this.editingProfile;
+
+    // Same constraints the backend's @Valid on UpdateProfileRequest enforces — fail
+    // fast in the UI so the toast is friendlier than a generic 400.
+    if (!username || username.length < 3 || username.length > 50
+        || !email || !email.includes('@')
+        || !password || password.length < 6 || password.length > 100) {
+      this.toastService.show(
+        'Username 3-50 chars, valid email, password 6-100 chars',
+        ToastType.Danger,
+      );
+      return;
+    }
+
+    this.authService.updateProfile(username, email, password).subscribe({
+      next: () => {
+        // Re-decode the new token the same way ngOnInit does, so the header
+        // updates immediately if the username changed.
+        const token = this.authService.getToken()?.replace('Bearer ', '');
+        if (token) {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          this.username = payload.sub;
+        }
+        this.toastService.show('Profile updated successfully!', ToastType.Success);
+        this.closeProfileModal();
+      },
+      error: err => {
+        const msg = err?.error?.message ?? 'Failed to update profile.';
+        this.toastService.show(msg, ToastType.Danger);
+      },
+    });
+  }
+
+  onCancelProfileEdit(): void {
+    this.closeProfileModal();
+  }
+
+  private closeProfileModal(): void {
+    this.isEditProfileModalOpen = false;
+    this.editingProfile = null;
   }
 }
 

@@ -20,7 +20,7 @@
           </div>
         </div>
         <div class="col-auto text-end">
-          <button class="btn btn-outline-primary btn-sm rounded-pill px-4">Edit Profile</button>
+          <button class="btn btn-outline-primary btn-sm rounded-pill px-4" (click)="onEditProfile()">Edit Profile</button>
         </div>
       </div>
     </div>
@@ -222,6 +222,45 @@
       <div class="modal-footer border-0 p-4 pt-0">
         <button type="button" class="btn btn-light rounded-pill px-4" (click)="onCancelEdit()">Cancel</button>
         <button type="button" class="btn btn-primary rounded-pill px-4" (click)="onSaveEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Edit Profile Modal -->
+@if (isEditProfileModalOpen) {
+<div class="modal-backdrop fade show"></div>
+<div class="modal d-block" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header bg-primary text-white rounded-top-4 py-3">
+        <h5 class="modal-title fw-bold">Edit Profile</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="onCancelProfileEdit()"></button>
+      </div>
+      @if (editingProfile) {
+      <div class="modal-body p-4">
+        <form #editProfileForm="ngForm">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label fw-bold small text-muted text-uppercase">Username <span class="text-danger">*</span></label>
+              <input type="text" name="username" [(ngModel)]="editingProfile.username" class="form-control" required minlength="3" maxlength="50">
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-bold small text-muted text-uppercase">Email <span class="text-danger">*</span></label>
+              <input type="email" name="email" [(ngModel)]="editingProfile.email" class="form-control" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-bold small text-muted text-uppercase">Password <span class="text-danger">*</span></label>
+              <input type="password" name="password" [(ngModel)]="editingProfile.password" class="form-control" required minlength="6" maxlength="100">
+            </div>
+          </div>
+        </form>
+      </div>
+      }
+      <div class="modal-footer border-0 p-4 pt-0">
+        <button type="button" class="btn btn-light rounded-pill px-4" (click)="onCancelProfileEdit()">Cancel</button>
+        <button type="button" class="btn btn-primary rounded-pill px-4" (click)="onSaveProfileEdit()">Save Changes</button>
       </div>
     </div>
   </div>

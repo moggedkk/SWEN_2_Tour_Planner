@@ -33,6 +33,17 @@ export class AuthService {
       );
   }
 
+  // Username may change, so the backend re-issues a fresh JWT. We overwrite the
+  // stored token so the next request (and the profile page's username decode) sees the new sub.
+  updateProfile(username: string, email: string, password: string): Observable<void> {
+    return this.http
+      .put<TokenResponse>(`${this.apiUrl}/users/me`, { username, email, password })
+      .pipe(
+        tap(response => this.storeToken(response.token)),
+        map(() => undefined),
+      );
+  }
+
   logout(): void {
     if (isPlatformBrowser(this.platformId )) {
       localStorage.removeItem(this.TOKEN_KEY);
